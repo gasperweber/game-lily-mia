@@ -781,3 +781,22 @@ button { cursor: pointer; border: none; outline: none; transition: all 0.15s eas
   .how-to-grid { grid-template-columns: 1fr 1fr; }
   .title-line2, .title-line3 { font-size: 2.4rem; }
 }
+
+/* ================================================
+   QUESTION — CONFIRM FLOW
+   ================================================ */
+.q-option.selected {
+  border-color: #2980b9;
+  background: linear-gradient(180deg, #d6eaf8, #aed6f1);
+  color: #1a5276;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(41,128,185,0.3);
+}
+.btn-confirm {
+  margin-bottom: 10px;
+  background: linear-gradient(180deg, #2980b9, #1a6a9f);
+  border-color: #1a6a9f;
+}
+.btn-confirm:hover {
+  background: linear-gradient(180deg, #3498db, #2980b9);
+}

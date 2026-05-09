@@ -1,225 +1,26 @@
-// WorldMap.js — Canvas-rendered cartoon world map with 60 tiles
+// WorldMap.js — Artistic canvas-rendered world map with 60 tiles
 
 class WorldMap {
   constructor(canvasId) {
     this.canvas = document.getElementById(canvasId);
     this.ctx    = this.canvas.getContext('2d');
-    this.W      = this.canvas.width;
-    this.H      = this.canvas.height;
-    this.tiles  = this._buildTiles();
+    this.W      = this.canvas.width;   // 1300
+    this.H      = this.canvas.height;  // 650
+    this.tiles  = [];           // populated by setTileCategories
+    this.tileCategories = [];
     this.players = [];
     this.animFrame = null;
-    this._cloudOffset = 0;
     this._waveOffset  = 0;
-    this._landmarks   = this._buildLandmarks();
-    this._animals     = this._buildMapAnimals();
+    this._cloudOffset = 0;
+    this._glowPhase   = 0;
   }
 
-  // Convert lon/lat to canvas pixel
+  // ── COORDINATE CONVERSION ────────────────────────────────────
   _ll(lon, lat) {
-    const x = (lon + 180) / 360 * this.W;
-    const y = (85 - lat) / 165 * this.H;
-    return { x, y };
-  }
-
-  // ── 60 TILES ──────────────────────────────────────────────
-  _buildTiles() {
-    const W = this.W, H = this.H;
-    // Each tile: { id, country, continent, x, y, type }
-    // type: 'normal' | 'special' (memory game) | 'start' | 'finish'
-    const raw = [
-      // North America
-      [1,  "Greenland",      "Arctic",          -45,  72, "start"],
-      [2,  "Alaska",         "North America",   -152, 61, "normal"],
-      [3,  "Canada West",    "North America",   -125, 50, "normal"],
-      [4,  "California",     "North America",   -122, 37, "normal"],
-      [5,  "Texas",          "North America",   -99,  31, "normal"],
-      [6,  "Florida",        "North America",   -81,  27, "normal"],
-      [7,  "New York",       "North America",   -74,  41, "normal"],
-      [8,  "Canada East",    "North America",   -71,  46, "special"],
-      [9,  "Mexico",         "North America",   -99,  19, "normal"],
-      [10, "Cuba",           "Central America & Caribbean", -82, 22, "normal"],
-      // Central & South America
-      [11, "Colombia",       "South America",   -74,  4,  "normal"],
-      [12, "Venezuela",      "South America",   -66,  8,  "special"],
-      [13, "Amazon",         "South America",   -62,  -3, "normal"],
-      [14, "Brazil",         "South America",   -43,  -23,"normal"],
-      [15, "Bolivia",        "South America",   -65,  -17,"normal"],
-      [16, "Peru",           "South America",   -76,  -12,"normal"],
-      [17, "Ecuador",        "South America",   -78,  -2, "special"],
-      [18, "Chile",          "South America",   -71,  -30,"normal"],
-      [19, "Argentina",      "South America",   -65,  -34,"normal"],
-      [20, "Panama",         "Central America & Caribbean",-79, 9,"normal"],
-      // Europe
-      [21, "Iceland",        "Europe",          -22,  65, "normal"],
-      [22, "United Kingdom", "Europe",          -2,   52, "normal"],
-      [23, "Portugal",       "Europe",          -8,   38, "special"],
-      [24, "Spain",          "Europe",          -4,   40, "normal"],
-      [25, "France",         "Europe",          2,    47, "normal"],
-      [26, "Netherlands",    "Europe",          5,    52, "normal"],
-      [27, "Germany",        "Europe",          10,   51, "normal"],
-      [28, "Italy",          "Europe",          12,   43, "special"],
-      [29, "Greece",         "Europe",          22,   39, "normal"],
-      [30, "Norway",         "Europe",          10,   62, "normal"],
-      [31, "Finland",        "Europe",          26,   64, "normal"],
-      [32, "Russia West",    "Europe",          37,   56, "normal"],
-      // Africa
-      [33, "Morocco",        "Africa",          -6,   32, "normal"],
-      [34, "Egypt",          "Africa",          31,   27, "normal"],
-      [35, "Nigeria",        "Africa",          8,    9,  "normal"],
-      [36, "Ghana",          "Africa",          -1,   8,  "special"],
-      [37, "Ethiopia",       "Africa",          40,   9,  "normal"],
-      [38, "Kenya",          "Africa",          37,   0,  "normal"],
-      [39, "Tanzania",       "Africa",          35,   -6, "normal"],
-      [40, "Madagascar",     "Africa",          47,   -20,"special"],
-      [41, "South Africa",   "Africa",          25,   -30,"normal"],
-      [42, "DR Congo",       "Africa",          23,   -2, "normal"],
-      // Middle East & South Asia
-      [43, "Saudi Arabia",   "Middle East",     45,   24, "normal"],
-      [44, "India South",    "South Asia",      73,   19, "normal"],
-      [45, "India North",    "South Asia",      77,   29, "special"],
-      [46, "Nepal",          "South Asia",      84,   28, "normal"],
-      [47, "Sri Lanka",      "South Asia",      81,   8,  "normal"],
-      // East Asia
-      [48, "Mongolia",       "East Asia",       105,  47, "normal"],
-      [49, "China North",    "East Asia",       116,  40, "normal"],
-      [50, "China South",    "East Asia",       121,  31, "special"],
-      [51, "Japan",          "East Asia",       139,  36, "normal"],
-      [52, "South Korea",    "East Asia",       127,  37, "normal"],
-      [53, "Russia East",    "East Asia",       100,  60, "normal"],
-      // Southeast Asia
-      [54, "Thailand",       "Southeast Asia",  101,  14, "normal"],
-      [55, "Vietnam",        "Southeast Asia",  107,  16, "normal"],
-      [56, "Philippines",    "Southeast Asia",  122,  12, "special"],
-      [57, "Indonesia",      "Southeast Asia",  115,  -5, "normal"],
-      // Oceania
-      [58, "Australia West", "Oceania",         116,  -32,"normal"],
-      [59, "Australia East", "Oceania",         151,  -34,"normal"],
-      [60, "New Zealand",    "Oceania",         174,  -41,"finish"],
-    ];
-
-    return raw.map(([id, country, continent, lon, lat, type]) => {
-      const pos = this._ll(lon, lat);
-      return { id, country, continent, x: pos.x, y: pos.y, type };
-    });
-  }
-
-  // ── LANDMARKS ────────────────────────────────────────────
-  _buildLandmarks() {
-    return [
-      { lon: 2,   lat: 48.8, label: "Eiffel Tower", draw: (ctx,x,y) => this._drawEiffelTower(ctx,x,y) },
-      { lon: -0.1,lat: 51.5, label: "Big Ben",      draw: (ctx,x,y) => this._drawBigBen(ctx,x,y) },
-      { lon: -73.9,lat:40.7, label: "Skyscraper",   draw: (ctx,x,y) => this._drawSkyscraper(ctx,x,y) },
-      { lon: -122.5,lat:37.8,label: "Golden Gate",  draw: (ctx,x,y) => this._drawBridge(ctx,x,y) },
-    ];
-  }
-
-  _buildMapAnimals() {
-    // Decorative cartoon animals on the map
-    return [
-      { lon: -100, lat: 50,  animal: "bear" },
-      { lon: -70,  lat: -15, animal: "parrot" },
-      { lon: 35,   lat: -3,  animal: "elephant" },
-      { lon: 33,   lat: 0,   animal: "zebra" },
-      { lon: 25,   lat: -25, animal: "lion" },
-      { lon: 85,   lat: 30,  animal: "tiger" },
-      { lon: 135,  lat: 34,  animal: "panda" },
-      { lon: 148,  lat: -30, animal: "kangaroo" },
-    ];
-  }
-
-  // ── DRAW TILE ─────────────────────────────────────────────
-  _drawTile(tile, highlighted) {
-    const ctx = this.ctx;
-    const r = highlighted ? 18 : 13;
-    const { x, y, type } = tile;
-
-    // Shadow
-    ctx.save();
-    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur  = 8;
-    ctx.shadowOffsetY = 3;
-
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-
-    if (type === 'start')        { ctx.fillStyle = '#27ae60'; }
-    else if (type === 'finish')  { ctx.fillStyle = '#ffd700'; }
-    else if (type === 'special') { ctx.fillStyle = '#e74c3c'; }
-    else                         { ctx.fillStyle = '#ff8c42'; }
-    ctx.fill();
-
-    ctx.restore();
-
-    // Border
-    ctx.beginPath();
-    ctx.arc(x, y, r, 0, Math.PI * 2);
-    ctx.strokeStyle = 'rgba(255,255,255,0.8)';
-    ctx.lineWidth = highlighted ? 4 : 2.5;
-    ctx.stroke();
-
-    // Number
-    ctx.fillStyle = 'white';
-    ctx.font = `bold ${highlighted ? 11 : 9}px Nunito, sans-serif`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(tile.id, x, y);
-
-    // Pulsing ring for highlighted tile
-    if (highlighted) {
-      const pulse = Math.sin(Date.now() / 300) * 0.4 + 0.6;
-      ctx.beginPath();
-      ctx.arc(x, y, r + 6, 0, Math.PI * 2);
-      ctx.strokeStyle = `rgba(255,220,0,${pulse})`;
-      ctx.lineWidth = 3;
-      ctx.stroke();
-    }
-  }
-
-  _drawPath() {
-    const ctx = this.ctx;
-    ctx.save();
-    ctx.setLineDash([6, 4]);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(255,255,255,0.55)';
-    ctx.beginPath();
-    for (let i = 0; i < this.tiles.length; i++) {
-      const t = this.tiles[i];
-      if (i === 0) ctx.moveTo(t.x, t.y);
-      else         ctx.lineTo(t.x, t.y);
-    }
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  // ── CONTINENT SHAPES ─────────────────────────────────────
-  _drawContinents() {
-    this._drawNorthAmerica();
-    this._drawSouthAmerica();
-    this._drawEurope();
-    this._drawAfrica();
-    this._drawAsia();
-    this._drawAustralia();
-    this._drawAntarctica();
-    this._drawGreenland();
-  }
-
-  _fillContinent(points, fillColor, strokeColor='rgba(255,255,255,0.4)') {
-    const ctx = this.ctx;
-    ctx.save();
-    ctx.beginPath();
-    const [fx, fy] = points[0];
-    ctx.moveTo(fx, fy);
-    for (let i = 1; i < points.length; i++) {
-      ctx.lineTo(points[i][0], points[i][1]);
-    }
-    ctx.closePath();
-    ctx.fillStyle = fillColor;
-    ctx.fill();
-    ctx.strokeStyle = strokeColor;
-    ctx.lineWidth = 1.5;
-    ctx.stroke();
-    ctx.restore();
+    return {
+      x: (lon + 180) / 360 * this.W,
+      y: (85 - lat)  / 165 * this.H,
+    };
   }
 
   _toXY(lonLatArr) {
@@ -229,442 +30,589 @@ class WorldMap {
     });
   }
 
-  _drawNorthAmerica() {
-    const pts = this._toXY([
-      [-168,71],[-140,71],[-130,73],[-95,73],[-80,73],[-67,63],
-      [-55,48],[-55,46],[-67,47],[-66,44],[-68,44],[-70,41],
-      [-75,35],[-80,25],[-87,16],[-92,16],[-88,23],[-104,23],
-      [-110,32],[-125,33],[-120,38],[-122,37],[-124,48],
-      [-125,50],[-130,55],[-133,57],[-140,60],[-145,62],
-      [-155,59],[-163,60],[-168,65]
-    ]);
-    this._fillContinent(pts, '#6fba5a');
-
-    // Color the desert regions sandy
-    const desert = this._toXY([
-      [-104,23],[-88,23],[-90,30],[-100,32],[-110,32]
-    ]);
-    this._fillContinent(desert, '#d4b483', 'transparent');
+  // ── TILE SETUP ───────────────────────────────────────────────
+  setTileCategories(cats) {
+    this.tileCategories = cats;
+    this.tiles = this._buildTiles(cats);
   }
 
-  _drawSouthAmerica() {
-    const pts = this._toXY([
-      [-79,9],[-75,9],[-62,10],[-60,6],[-52,5],[-50,0],
-      [-48,-5],[-43,-23],[-42,-22],[-50,-30],[-55,-35],
-      [-65,-55],[-68,-55],[-72,-42],[-72,-30],[-68,-18],
-      [-70,-15],[-75,-12],[-79,0],[-77,8]
-    ]);
-    this._fillContinent(pts, '#78c85e');
+  _buildTiles(cats) {
+    // 60 tiles — lon/lat positions around the world path
+    const raw = [
+      [1,  -45,  72], [2,  -152, 61], [3,  -125, 50], [4,  -122, 37],
+      [5,  -99,  31], [6,  -81,  27], [7,  -74,  41], [8,  -71,  46],
+      [9,  -99,  19], [10, -82,  22], [11, -74,   4], [12, -66,   8],
+      [13, -62,  -3], [14, -43, -23], [15, -65, -17], [16, -76, -12],
+      [17, -78,  -2], [18, -71, -30], [19, -65, -34], [20, -79,   9],
+      [21, -22,  65], [22,  -2,  52], [23,  -8,  38], [24,  -4,  40],
+      [25,   2,  47], [26,   5,  52], [27,  10,  51], [28,  12,  43],
+      [29,  22,  39], [30,  10,  62], [31,  26,  64], [32,  37,  56],
+      [33,  -6,  32], [34,  31,  27], [35,   8,   9], [36,  -1,   8],
+      [37,  40,   9], [38,  37,   0], [39,  35,  -6], [40,  47, -20],
+      [41,  25, -30], [42,  23,  -2], [43,  45,  24], [44,  73,  19],
+      [45,  77,  29], [46,  84,  28], [47,  81,   8], [48, 105,  47],
+      [49, 116,  40], [50, 121,  31], [51, 139,  36], [52, 127,  37],
+      [53, 100,  60], [54, 101,  14], [55, 107,  16], [56, 122,  12],
+      [57, 115,  -5], [58, 116, -32], [59, 151, -34], [60, 174, -41],
+    ];
 
-    // Amazon basin slightly darker green
-    const amazon = this._toXY([
-      [-73,3],[-52,3],[-48,-5],[-60,-10],[-75,-5]
-    ]);
-    this._fillContinent(amazon, '#5aa845', 'transparent');
-
-    // Patagonia sandy
-    const pat = this._toXY([
-      [-72,-38],[-65,-38],[-65,-55],[-70,-55],[-72,-42]
-    ]);
-    this._fillContinent(pat, '#c9b882', 'transparent');
+    return raw.map(([id, lon, lat]) => {
+      const pos = this._ll(lon, lat);
+      const category = (cats && cats[id - 1]) ? cats[id - 1] : 'geography';
+      return { id, x: pos.x, y: pos.y, category };
+    });
   }
 
-  _drawEurope() {
-    const pts = this._toXY([
-      [-10,70],[30,71],[40,63],[30,60],[25,65],[15,70],
-      [5,60],[-5,65],[-25,65],
-      // south
-      [-10,70],[-10,62],[0,58],[5,52],[2,48],[-5,43],
-      [-9,38],[0,37],[5,36],[18,37],[23,38],[28,37],
-      [35,37],[40,40],[40,63]
-    ]);
-    this._fillContinent(pts, '#7ec860');
-  }
+  // ── COUNTRY SHAPES ───────────────────────────────────────────
+  _drawCountries() {
+    const countries = [
+      // North America
+      { name:'Greenland',    color:'#90CAF9', pts:[[-54,83],[-20,83],[-12,78],[-15,72],[-25,68],[-43,60],[-52,65],[-55,77]] },
+      { name:'Alaska',       color:'#5C6BC0', pts:[[-140,70],[-141,60],[-163,60],[-168,65],[-168,71],[-155,71],[-140,70]] },
+      { name:'Canada',       color:'#F48FB1', pts:[[-141,60],[-141,49],[-125,49],[-95,49],[-84,46],[-77,44],[-67,47],[-56,47],[-60,46],[-60,63],[-68,63],[-80,63],[-95,60],[-110,60],[-141,60]] },
+      { name:'USA',          color:'#42A5F5', pts:[[-125,49],[-95,49],[-84,46],[-77,44],[-67,47],[-67,44],[-70,41],[-76,35],[-81,25],[-90,29],[-97,26],[-105,31],[-117,32],[-124,38],[-124,48],[-125,49]] },
+      { name:'Mexico',       color:'#FFA726', pts:[[-117,32],[-97,26],[-90,21],[-88,16],[-92,16],[-105,23],[-114,29],[-117,32]] },
+      { name:'Cuba',         color:'#66BB6A', pts:[[-85,23],[-74,20],[-74,22],[-84,23],[-85,23]] },
+      { name:'Colombia',     color:'#AB47BC', pts:[[-79,8],[-67,12],[-67,6],[-76,-1],[-79,1],[-79,8]] },
+      { name:'Venezuela',    color:'#FFCA28', pts:[[-67,12],[-60,9],[-61,8],[-60,5],[-67,6],[-67,12]] },
+      { name:'Brazil',       color:'#66BB6A', pts:[[-34,-4],[-35,-9],[-38,-13],[-43,-23],[-48,-27],[-52,-33],[-55,-35],[-60,-33],[-64,-20],[-60,-15],[-56,-10],[-50,-1],[-44,0],[-34,-4]] },
+      { name:'Peru',         color:'#FF7043', pts:[[-82,-2],[-80,-3],[-69,-14],[-70,-18],[-76,-14],[-79,-8],[-80,-2],[-82,-2]] },
+      { name:'Chile',        color:'#26C6DA', pts:[[-70,-18],[-70,-55],[-75,-55],[-75,-42],[-72,-30],[-69,-20],[-70,-18]] },
+      { name:'Argentina',    color:'#81D4FA', pts:[[-60,-33],[-56,-35],[-56,-51],[-66,-55],[-68,-55],[-65,-40],[-60,-33]] },
+      { name:'Bolivia',      color:'#EF5350', pts:[[-69,-14],[-60,-15],[-58,-17],[-60,-22],[-68,-22],[-69,-14]] },
+      // Europe
+      { name:'Iceland',      color:'#80DEEA', pts:[[-25,66],[-13,65],[-13,66],[-20,66],[-25,66]] },
+      { name:'UK',           color:'#EC407A', pts:[[-5,50],[-2,51],[2,51],[0,52],[-1,52],[-5,58],[-5,50]] },
+      { name:'France',       color:'#5C6BC0', pts:[[-5,43],[3,43],[7,44],[7,49],[2,51],[-2,48],[-5,47],[-5,43]] },
+      { name:'Spain',        color:'#FFA726', pts:[[-9,36],[3,36],[3,43],[-5,43],[-9,44],[-9,36]] },
+      { name:'Portugal',     color:'#FDD835', pts:[[-9,37],[-7,37],[-7,42],[-9,42],[-9,37]] },
+      { name:'Germany',      color:'#78909C', pts:[[7,48],[13,48],[15,51],[14,54],[10,55],[7,53],[7,48]] },
+      { name:'Italy',        color:'#4CAF50', pts:[[7,44],[15,38],[16,39],[13,38],[8,40],[7,44]] },
+      { name:'Greece',       color:'#29B6F6', pts:[[20,38],[26,38],[27,41],[22,42],[20,38]] },
+      { name:'Norway',       color:'#AB47BC', pts:[[5,58],[5,62],[15,70],[28,71],[30,70],[28,63],[20,63],[14,60],[5,58]] },
+      { name:'Sweden',       color:'#42A5F5', pts:[[11,56],[14,56],[14,60],[20,63],[18,69],[15,70],[5,62],[11,56]] },
+      { name:'Finland',      color:'#A5D6A7', pts:[[20,60],[30,60],[28,70],[20,70],[20,60]] },
+      { name:'Poland',       color:'#E53935', pts:[[14,54],[24,54],[24,50],[14,50],[14,54]] },
+      { name:'Russia',       color:'#CE93D8', pts:[[30,70],[60,73],[80,73],[140,73],[160,65],[180,65],[180,54],[150,52],[140,47],[120,50],[100,50],[80,55],[60,60],[37,55],[30,60],[30,70]] },
+      { name:'Turkey',       color:'#EF6C00', pts:[[26,42],[36,42],[44,38],[36,36],[26,36],[26,42]] },
+      // Africa
+      { name:'Morocco',      color:'#FFCC02', pts:[[-6,36],[0,35],[2,36],[2,34],[0,30],[-5,28],[-8,28],[-9,30],[-6,36]] },
+      { name:'Egypt',        color:'#FFE082', pts:[[25,31],[35,30],[37,22],[33,22],[25,22],[25,31]] },
+      { name:'Nigeria',      color:'#4CAF50', pts:[[3,6],[14,12],[14,6],[3,5],[3,6]] },
+      { name:'Kenya',        color:'#A1887F', pts:[[34,5],[42,2],[42,-2],[37,-4],[34,1],[34,5]] },
+      { name:'Tanzania',     color:'#00ACC1', pts:[[29,-1],[40,-1],[40,-11],[32,-11],[29,-5],[29,-1]] },
+      { name:'South Africa', color:'#42A5F5', pts:[[17,-29],[32,-29],[32,-34],[27,-35],[17,-34],[17,-29]] },
+      { name:'Ethiopia',     color:'#EF5350', pts:[[33,15],[43,12],[43,4],[36,4],[33,7],[33,15]] },
+      { name:'Madagascar',   color:'#F48FB1', pts:[[44,-13],[50,-13],[50,-26],[44,-26],[44,-13]] },
+      // Middle East & Asia
+      { name:'Saudi Arabia', color:'#FFE082', pts:[[36,30],[56,30],[56,16],[43,14],[36,22],[36,30]] },
+      { name:'India',        color:'#FF7043', pts:[[68,37],[80,37],[82,28],[78,8],[72,8],[68,23],[68,37]] },
+      { name:'China',        color:'#EF5350', pts:[[73,40],[135,40],[135,25],[120,20],[110,22],[105,18],[100,20],[90,28],[80,35],[73,40]] },
+      { name:'Japan',        color:'#F48FB1', pts:[[130,33],[131,31],[132,33],[136,34],[142,44],[141,44],[133,34],[130,33]] },
+      { name:'South Korea',  color:'#42A5F5', pts:[[126,34],[129,34],[129,38],[126,38],[126,34]] },
+      { name:'Mongolia',     color:'#A5D6A7', pts:[[87,47],[120,47],[120,42],[87,42],[87,47]] },
+      { name:'Thailand',     color:'#EC407A', pts:[[98,20],[102,20],[102,13],[100,5],[98,8],[98,20]] },
+      { name:'Indonesia',    color:'#FF5722', pts:[[95,-6],[141,-6],[141,-8],[130,-9],[115,-8],[95,-7],[95,-6]] },
+      // Oceania
+      { name:'Australia',    color:'#FFCA28', pts:[[114,-22],[114,-35],[130,-35],[138,-35],[148,-38],[154,-27],[148,-19],[136,-12],[130,-12],[121,-18],[114,-22]] },
+      { name:'New Zealand',  color:'#66BB6A', pts:[[166,-46],[168,-43],[172,-44],[176,-38],[173,-36],[170,-40],[168,-41],[166,-46]] },
+      { name:'Antarctica',   color:'#E3F2FD', pts:[[-180,-70],[180,-70],[180,-80],[-180,-80]] },
+    ];
 
-  _drawAfrica() {
-    const pts = this._toXY([
-      [-6,38],[37,38],[38,35],[42,12],[45,12],[51,12],
-      [44,-11],[40,-10],[36,-3],[38,-11],[36,-17],
-      [33,-28],[27,-34],[18,-35],[15,-30],[12,-18],
-      [8,-5],[8,5],[1,5],[-5,5],[-10,8],[-15,15],
-      [-15,25],[-10,36],[-5,38]
-    ]);
-    this._fillContinent(pts, '#78c85e');
-
-    // Sahara desert
-    const sahara = this._toXY([
-      [-5,30],[38,30],[38,18],[12,18],[8,20],[-5,22]
-    ]);
-    this._fillContinent(sahara, '#e8c96b', 'transparent');
-  }
-
-  _drawAsia() {
-    const pts = this._toXY([
-      [37,56],[37,70],[50,73],[80,78],[100,78],
-      [140,72],[170,65],[180,60],[170,50],[155,52],
-      [142,47],[140,36],[130,34],[121,25],[110,18],
-      [100,4],[105,-5],[120,-10],[128,-4],[135,0],
-      [135,10],[120,25],[115,30],[100,30],[95,28],
-      [73,8],[65,25],[45,12],[35,37],[40,40],[40,63],
-      [37,70]
-    ]);
-    this._fillContinent(pts, '#74c260');
-
-    // Siberian tundra lighter
-    const siberia = this._toXY([
-      [60,60],[160,60],[160,70],[60,70]
-    ]);
-    this._fillContinent(siberia, '#90d080', 'transparent');
-
-    // Arabian peninsula — sandy
-    const arabia = this._toXY([
-      [35,28],[60,28],[60,12],[45,12],[37,22]
-    ]);
-    this._fillContinent(arabia, '#e8c96b', 'transparent');
-
-    // Gobi desert
-    const gobi = this._toXY([
-      [90,38],[120,38],[120,45],[90,45]
-    ]);
-    this._fillContinent(gobi, '#d4c08a', 'transparent');
-  }
-
-  _drawAustralia() {
-    const pts = this._toXY([
-      [114,-22],[114,-35],[130,-35],[134,-33],[138,-35],
-      [147,-38],[151,-34],[154,-27],[148,-19],[142,-10],
-      [137,-12],[130,-12],[122,-18],[114,-22]
-    ]);
-    this._fillContinent(pts, '#c9b56a');
-
-    // Coastal green strip
-    const coast = this._toXY([
-      [145,-38],[154,-27],[148,-19],[145,-38]
-    ]);
-    this._fillContinent(coast, '#7ec860', 'transparent');
-
-    // NZ
-    const nz = this._toXY([
-      [166,-46],[168,-43],[172,-44],[176,-38],[172,-36],
-      [170,-40],[168,-41],[166,-46]
-    ]);
-    this._fillContinent(nz, '#7ec860');
-  }
-
-  _drawAntarctica() {
-    const pts = this._toXY([
-      [-180,-70],[-120,-70],[-60,-70],[0,-70],[60,-70],
-      [120,-70],[180,-70],[180,-80],[-180,-80]
-    ]);
-    this._fillContinent(pts, '#dff0ff');
-  }
-
-  _drawGreenland() {
-    const pts = this._toXY([
-      [-25,83],[-15,82],[0,81],[5,76],[-10,72],
-      [-20,70],[-30,68],[-44,60],[-52,65],[-58,70],
-      [-55,77],[-42,83],[-25,83]
-    ]);
-    this._fillContinent(pts, '#b8e0f5');
-  }
-
-  // ── LANDMARKS ────────────────────────────────────────────
-  _drawEiffelTower(ctx, x, y) {
-    ctx.save();
-    ctx.fillStyle = '#7f7f7f';
-    ctx.beginPath();
-    ctx.moveTo(x, y - 20);
-    ctx.lineTo(x - 5, y);
-    ctx.lineTo(x - 8, y + 8);
-    ctx.lineTo(x + 8, y + 8);
-    ctx.lineTo(x + 5, y);
-    ctx.closePath();
-    ctx.fill();
-    ctx.fillRect(x - 9, y + 8, 18, 3);
-    ctx.restore();
-  }
-
-  _drawBigBen(ctx, x, y) {
-    ctx.save();
-    ctx.fillStyle = '#a08060';
-    ctx.fillRect(x - 4, y - 18, 8, 20);
-    ctx.beginPath();
-    ctx.moveTo(x - 5, y - 18);
-    ctx.lineTo(x, y - 26);
-    ctx.lineTo(x + 5, y - 18);
-    ctx.closePath();
-    ctx.fill();
-    ctx.strokeStyle = '#fff';
-    ctx.lineWidth = 1;
-    ctx.strokeRect(x - 4, y - 15, 8, 8);
-    ctx.restore();
-  }
-
-  _drawBridge(ctx, x, y) {
-    ctx.save();
-    ctx.strokeStyle = '#c0392b';
-    ctx.lineWidth = 2;
-    ctx.beginPath();
-    ctx.moveTo(x - 20, y);
-    ctx.lineTo(x + 20, y);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x - 8, y);
-    ctx.lineTo(x - 8, y - 18);
-    ctx.moveTo(x + 8, y);
-    ctx.lineTo(x + 8, y - 18);
-    ctx.stroke();
-    ctx.beginPath();
-    ctx.moveTo(x - 8, y - 18);
-    ctx.quadraticCurveTo(x, y - 24, x + 8, y - 18);
-    ctx.stroke();
-    ctx.restore();
-  }
-
-  _drawSkyscraper(ctx, x, y) {
-    ctx.save();
-    ctx.fillStyle = '#7bafd4';
-    ctx.fillRect(x - 5, y - 22, 10, 22);
-    ctx.fillRect(x - 3, y - 30, 6, 10);
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
-    for (let i = 0; i < 5; i++) {
-      ctx.fillRect(x - 4, y - 20 + i * 4, 3, 2);
-      ctx.fillRect(x + 1, y - 20 + i * 4, 3, 2);
-    }
-    ctx.restore();
-  }
-
-  // ── CARTOON ANIMALS ON MAP ───────────────────────────────
-  _drawCartoonAnimal(ctx, x, y, type) {
-    ctx.save();
-    ctx.translate(x, y);
-    const scale = 0.55;
-    ctx.scale(scale, scale);
-    switch(type) {
-      case 'bear':     this._drawBear(ctx); break;
-      case 'elephant': this._drawElephant(ctx); break;
-      case 'zebra':    this._drawZebra(ctx); break;
-      case 'lion':     this._drawLion(ctx); break;
-      case 'tiger':    this._drawTiger(ctx); break;
-      case 'panda':    this._drawPanda(ctx); break;
-      case 'kangaroo': this._drawKangaroo(ctx); break;
-      case 'parrot':   this._drawParrot(ctx); break;
-    }
-    ctx.restore();
-  }
-
-  _drawBear(ctx) {
-    ctx.fillStyle = '#8B5E3C';
-    ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(-12, -12, 7, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(12, -12, 7, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#D2A679';
-    ctx.beginPath(); ctx.arc(0, 4, 8, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#1a0800';
-    ctx.beginPath(); ctx.arc(-5, -3, 2.5, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(5, -3, 2.5, 0, Math.PI*2); ctx.fill();
-  }
-
-  _drawElephant(ctx) {
-    ctx.fillStyle = '#aaa';
-    ctx.beginPath(); ctx.ellipse(0, 0, 20, 15, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(0, -16, 14, 10, 0, 0, Math.PI*2); ctx.fill();
-    // trunk
-    ctx.beginPath();
-    ctx.moveTo(-8, -12); ctx.quadraticCurveTo(-22, 0, -18, 12);
-    ctx.lineWidth = 5; ctx.strokeStyle = '#aaa'; ctx.stroke();
-    // ears
-    ctx.beginPath(); ctx.ellipse(16, -10, 10, 14, 0.4, 0, Math.PI*2);
-    ctx.fillStyle = '#c0b0b0'; ctx.fill();
-    ctx.fillStyle = '#1a0800';
-    ctx.beginPath(); ctx.arc(4, -18, 2, 0, Math.PI*2); ctx.fill();
-  }
-
-  _drawZebra(ctx) {
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.ellipse(0, 4, 16, 10, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(-2, -10, 9, 12, -0.2, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#111';
-    for (let i = -8; i < 18; i += 5) {
-      ctx.fillRect(i - 16, 0, 2.5, 12);
-    }
-    ctx.fillStyle = '#1a0800';
-    ctx.beginPath(); ctx.arc(4, -14, 2, 0, Math.PI*2); ctx.fill();
-  }
-
-  _drawLion(ctx) {
-    ctx.fillStyle = '#c8a060';
-    ctx.beginPath(); ctx.arc(0, 0, 18, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#8B5E20';
-    ctx.beginPath(); ctx.arc(0, -2, 14, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#e8c060';
-    ctx.beginPath(); ctx.arc(0, -2, 11, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#1a0800';
-    ctx.beginPath(); ctx.arc(-4, -4, 2.5, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(4, -4, 2.5, 0, Math.PI*2); ctx.fill();
-  }
-
-  _drawTiger(ctx) {
-    ctx.fillStyle = '#e87820';
-    ctx.beginPath(); ctx.arc(0, 0, 15, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#000';
-    for (let a = 0; a < Math.PI*2; a += 0.6) {
+    const ctx = this.ctx;
+    countries.forEach(c => {
+      const pts = this._toXY(c.pts);
+      ctx.save();
       ctx.beginPath();
-      ctx.moveTo(Math.cos(a)*9, Math.sin(a)*9);
-      ctx.lineTo(Math.cos(a)*16, Math.sin(a)*16);
-      ctx.lineWidth = 2; ctx.stroke();
-    }
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(-4, -2, 3, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(4, -2, 3, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#111';
-    ctx.beginPath(); ctx.arc(-4, -2, 1.5, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(4, -2, 1.5, 0, Math.PI*2); ctx.fill();
+      ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.closePath();
+      ctx.fillStyle = c.color;
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255,255,255,0.6)';
+      ctx.lineWidth = 1;
+      ctx.stroke();
+      ctx.restore();
+    });
   }
 
-  _drawPanda(ctx) {
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(-10, -12, 7, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(10, -12, 7, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#111';
-    ctx.beginPath(); ctx.arc(-10, -12, 5, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(10, -12, 5, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(-5, -2, 5, 4, 0, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(5, -2, 5, 4, 0, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#fff';
-    ctx.beginPath(); ctx.arc(-5, -2, 2, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(5, -2, 2, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#111';
-    ctx.beginPath(); ctx.arc(-5, -2, 1, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.arc(5, -2, 1, 0, Math.PI*2); ctx.fill();
+  // ── COUNTRY LABELS ───────────────────────────────────────────
+  _drawCountryLabels() {
+    const labels = [
+      { text:'Canada',       lon:-100, lat:56  },
+      { text:'USA',          lon: -98, lat: 38  },
+      { text:'Mexico',       lon:-102, lat: 24  },
+      { text:'Brazil',       lon: -52, lat:-12  },
+      { text:'Argentina',    lon: -63, lat:-38  },
+      { text:'Peru',         lon: -75, lat:-10  },
+      { text:'UK',           lon:  -2, lat: 53  },
+      { text:'France',       lon:   2, lat: 46  },
+      { text:'Spain',        lon:  -4, lat: 40  },
+      { text:'Germany',      lon:  10, lat: 51  },
+      { text:'Italy',        lon:  12, lat: 42  },
+      { text:'Russia',       lon:  90, lat: 62  },
+      { text:'China',        lon: 105, lat: 35  },
+      { text:'India',        lon:  78, lat: 22  },
+      { text:'Egypt',        lon:  30, lat: 26  },
+      { text:'Nigeria',      lon:   8, lat:  8  },
+      { text:'S. Africa',    lon:  25, lat:-30  },
+      { text:'Australia',    lon: 133, lat:-26  },
+      { text:'Saudi Arabia', lon:  44, lat: 24  },
+      { text:'Indonesia',    lon: 115, lat: -5  },
+    ];
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.font = 'bold 9px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    labels.forEach(l => {
+      const { x, y } = this._ll(l.lon, l.lat);
+      ctx.fillStyle = 'rgba(0,0,0,0.55)';
+      ctx.fillText(l.text, x + 0.5, y + 0.5);
+      ctx.fillStyle = 'rgba(255,255,255,0.9)';
+      ctx.fillText(l.text, x, y);
+    });
+    ctx.restore();
   }
 
-  _drawKangaroo(ctx) {
-    ctx.fillStyle = '#c8905a';
-    ctx.beginPath(); ctx.ellipse(0, 5, 8, 14, 0.2, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(-4, -12, 7, 9, -0.3, 0, Math.PI*2); ctx.fill();
-    // ears
-    ctx.beginPath(); ctx.ellipse(-8, -20, 2, 5, -0.3, 0, Math.PI*2); ctx.fill();
-    ctx.beginPath(); ctx.ellipse(-4, -22, 2, 5, 0, 0, Math.PI*2); ctx.fill();
-    // tail
-    ctx.beginPath(); ctx.moveTo(8, 14); ctx.quadraticCurveTo(20, 18, 18, 5);
-    ctx.lineWidth = 5; ctx.strokeStyle = '#c8905a'; ctx.stroke();
-    ctx.fillStyle = '#111';
-    ctx.beginPath(); ctx.arc(-2, -15, 1.5, 0, Math.PI*2); ctx.fill();
+  // ── OCEAN LABELS ─────────────────────────────────────────────
+  _drawOceanLabels() {
+    const labels = [
+      { text:'PACIFIC OCEAN',         lon:-170, lat: 5  },
+      { text:'NORTH ATLANTIC OCEAN',  lon: -35, lat: 25 },
+      { text:'SOUTH ATLANTIC OCEAN',  lon: -15, lat:-25 },
+      { text:'INDIAN OCEAN',          lon:  80, lat:-20 },
+      { text:'SOUTHERN OCEAN',        lon:  50, lat:-60 },
+      { text:'ARCTIC OCEAN',          lon:  20, lat: 79 },
+      { text:'PACIFIC OCEAN',         lon: 165, lat:-20 },
+    ];
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.font = 'italic bold 10px Nunito, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = 'rgba(255,255,255,0.75)';
+    labels.forEach(l => {
+      const { x, y } = this._ll(l.lon, l.lat);
+      ctx.fillText(l.text, x, y);
+    });
+    ctx.restore();
   }
 
-  _drawParrot(ctx) {
-    ctx.fillStyle = '#27ae60';
-    ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#e74c3c';
-    ctx.beginPath(); ctx.ellipse(0, -12, 7, 9, 0, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#f1c40f';
-    ctx.beginPath();
-    ctx.moveTo(-3, -8); ctx.lineTo(8, -6); ctx.lineTo(-3, -4);
-    ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#111';
-    ctx.beginPath(); ctx.arc(-2, -11, 2, 0, Math.PI*2); ctx.fill();
-    ctx.fillStyle = '#3498db';
-    ctx.beginPath(); ctx.ellipse(-12, 2, 6, 10, 0.5, 0, Math.PI*2); ctx.fill();
-  }
-
-  // ── OCEAN BACKGROUND ─────────────────────────────────────
+  // ── OCEAN BACKGROUND ─────────────────────────────────────────
   _drawOcean() {
     const ctx = this.ctx;
     const grad = ctx.createLinearGradient(0, 0, 0, this.H);
     grad.addColorStop(0,   '#4cc9f8');
-    grad.addColorStop(0.5, '#5bc8f5');
-    grad.addColorStop(1,   '#3aabdf');
+    grad.addColorStop(0.5, '#2e86c1');
+    grad.addColorStop(1,   '#1a5276');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, this.W, this.H);
 
     // Wave lines
     ctx.save();
-    ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)';
     ctx.lineWidth = 1.5;
-    for (let y = 40; y < this.H; y += 30) {
+    for (let wy = 40; wy < this.H; wy += 22) {
       ctx.beginPath();
-      for (let x = 0; x < this.W; x += 4) {
-        const wave = Math.sin((x + this._waveOffset + y * 0.5) / 25) * 3;
-        if (x === 0) ctx.moveTo(x, y + wave);
-        else         ctx.lineTo(x, y + wave);
+      for (let wx = 0; wx < this.W; wx += 4) {
+        const wave = Math.sin((wx + this._waveOffset + wy * 0.4) / 28) * 2.5;
+        if (wx === 0) ctx.moveTo(wx, wy + wave);
+        else          ctx.lineTo(wx, wy + wave);
       }
       ctx.stroke();
     }
     ctx.restore();
   }
 
-  _drawClouds() {
+  // ── DECORATIVE ANIMALS ───────────────────────────────────────
+  _drawAllAnimals() {
+    const animals = [
+      { lon:-100, lat: 50, type:'bear'      },
+      { lon: -80, lat: 40, type:'eagle'     },
+      { lon: -55, lat:-12, type:'jaguar'    },
+      { lon: 135, lat:-32, type:'kangaroo'  },
+      { lon: 110, lat: 30, type:'panda'     },
+      { lon:  25, lat: -5, type:'elephant'  },
+      { lon:  -5, lat:-63, type:'penguin'   },
+      { lon: -30, lat: 79, type:'polarbear' },
+    ];
+    animals.forEach(a => {
+      const { x, y } = this._ll(a.lon, a.lat);
+      this._drawAnimal(x, y, a.type);
+    });
+  }
+
+  _drawAnimal(x, y, type) {
     const ctx = this.ctx;
     ctx.save();
-    ctx.fillStyle = 'rgba(255,255,255,0.6)';
-    const clouds = [
-      { x: 80,  y: 45,  r: 16 },
-      { x: 260, y: 30,  r: 14 },
-      { x: 560, y: 55,  r: 18 },
-      { x: 820, y: 40,  r: 15 },
-      { x: 1100,y: 35,  r: 16 },
-      { x: 1250,y: 60,  r: 13 },
-      { x: 350, y: 70,  r: 12 },
-      { x: 680, y: 25,  r: 17 },
-    ];
-    clouds.forEach(c => {
-      const ox = ((c.x + this._cloudOffset) % (this.W + 80)) - 40;
-      ctx.beginPath();
-      ctx.arc(ox,       c.y,     c.r,     0, Math.PI*2);
-      ctx.arc(ox+c.r,   c.y-3,   c.r*0.8, 0, Math.PI*2);
-      ctx.arc(ox+c.r*2, c.y,     c.r*0.9, 0, Math.PI*2);
-      ctx.arc(ox+c.r*3, c.y+2,   c.r*0.7, 0, Math.PI*2);
-      ctx.fill();
-    });
+    ctx.translate(x, y);
+    ctx.scale(0.52, 0.52);
+    switch(type) {
+      case 'bear':      this._anBear(ctx); break;
+      case 'eagle':     this._anEagle(ctx); break;
+      case 'jaguar':    this._anJaguar(ctx); break;
+      case 'kangaroo':  this._anKangaroo(ctx); break;
+      case 'panda':     this._anPanda(ctx); break;
+      case 'elephant':  this._anElephant(ctx); break;
+      case 'penguin':   this._anPenguin(ctx); break;
+      case 'polarbear': this._anPolarBear(ctx); break;
+    }
     ctx.restore();
   }
 
-  _drawWhales() {
-    const ctx = this.ctx;
-    const positions = [
-      { x: 180, y: 420 }, { x: 1200, y: 480 }, { x: 540, y: 590 }
+  _anBear(ctx) {
+    ctx.fillStyle = '#8B5E3C';
+    ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-11,-11,6,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(11,-11,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#D2A679';
+    ctx.beginPath(); ctx.arc(0,4,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath(); ctx.arc(-5,-2,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5,-2,2,0,Math.PI*2); ctx.fill();
+  }
+  _anEagle(ctx) {
+    ctx.fillStyle = '#4a3000';
+    ctx.beginPath(); ctx.arc(0,0,12,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.arc(0,-5,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#e8a800';
+    ctx.beginPath();
+    ctx.moveTo(-3,-2); ctx.lineTo(8,-4); ctx.lineTo(-3,0);
+    ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath(); ctx.arc(-2,-6,2,0,Math.PI*2); ctx.fill();
+    // wings
+    ctx.fillStyle = '#4a3000';
+    ctx.beginPath(); ctx.ellipse(-18,2,12,5,0.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(18,2,12,5,-0.5,0,Math.PI*2); ctx.fill();
+  }
+  _anJaguar(ctx) {
+    ctx.fillStyle = '#c8a000';
+    ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#000000';
+    for(let i=0;i<6;i++){
+      const a=i/6*Math.PI*2;
+      ctx.beginPath();
+      ctx.arc(Math.cos(a)*9,Math.sin(a)*9,2.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.fillStyle = '#e8c050';
+    ctx.beginPath(); ctx.arc(-4,-3,3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(4,-3,3,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#111';
+    ctx.beginPath(); ctx.arc(-4,-3,1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(4,-3,1.5,0,Math.PI*2); ctx.fill();
+  }
+  _anKangaroo(ctx) {
+    ctx.fillStyle = '#c8905a';
+    ctx.beginPath(); ctx.ellipse(0,6,8,13,0.2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-4,-11,7,9,-0.3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-8,-19,2.5,5,-0.3,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-4,-21,2,5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(8,13); ctx.quadraticCurveTo(20,17,18,5);
+    ctx.lineWidth=5; ctx.strokeStyle='#c8905a'; ctx.stroke();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(-2,-14,1.5,0,Math.PI*2); ctx.fill();
+  }
+  _anPanda(ctx) {
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-10,-12,6,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(10,-12,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#111';
+    ctx.beginPath(); ctx.arc(-10,-12,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(10,-12,4,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(-5,-1,5,3.5,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(5,-1,5,3.5,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.arc(-5,-1,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5,-1,2,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#111';
+    ctx.beginPath(); ctx.arc(-5,-1,1,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5,-1,1,0,Math.PI*2); ctx.fill();
+  }
+  _anElephant(ctx) {
+    ctx.fillStyle='#aaa';
+    ctx.beginPath(); ctx.ellipse(0,0,19,14,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0,-16,13,9,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-8,-12); ctx.quadraticCurveTo(-22,0,-18,12);
+    ctx.lineWidth=5; ctx.strokeStyle='#aaa'; ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(16,-10,10,13,0.4,0,Math.PI*2);
+    ctx.fillStyle='#c0b0b0'; ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(4,-18,2,0,Math.PI*2); ctx.fill();
+  }
+  _anPenguin(ctx) {
+    ctx.fillStyle='#111';
+    ctx.beginPath(); ctx.ellipse(0,2,9,13,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.beginPath(); ctx.ellipse(0,4,6,9,0,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(0,-9,5,6,0,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#e8a800';
+    ctx.beginPath(); ctx.moveTo(-3,-7); ctx.lineTo(3,-7); ctx.lineTo(0,-5); ctx.closePath(); ctx.fill();
+    ctx.fillStyle='#111'; ctx.beginPath(); ctx.arc(-2,-9,1.5,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(2,-9,1.5,0,Math.PI*2); ctx.fill();
+  }
+  _anPolarBear(ctx) {
+    ctx.fillStyle='#e8f8ff';
+    ctx.beginPath(); ctx.arc(0,0,15,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(-11,-11,6,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(11,-11,6,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#d0e8f0';
+    ctx.beginPath(); ctx.arc(0,4,7,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#111';
+    ctx.beginPath(); ctx.arc(-5,-2,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(5,-2,2,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(0,5,1.5,0,Math.PI*2); ctx.fill();
+  }
+
+  // ── LANDMARKS ────────────────────────────────────────────────
+  _drawLandmarks() {
+    const lms = [
+      { lon: 2,    lat: 48.9, draw: (x,y) => this._lmEiffelTower(x,y),  label:'Eiffel Tower' },
+      { lon:-0.12, lat: 51.5, draw: (x,y) => this._lmBigBen(x,y),       label:'Big Ben'      },
+      { lon:12.5,  lat: 41.9, draw: (x,y) => this._lmColosseum(x,y),    label:'Colosseum'    },
+      { lon:78.0,  lat: 27.2, draw: (x,y) => this._lmTajMahal(x,y),     label:'Taj Mahal'    },
+      { lon:116.6, lat: 40.3, draw: (x,y) => this._lmGreatWall(x,y),    label:'Great Wall'   },
+      { lon:-74.0, lat: 40.7, draw: (x,y) => this._lmStatue(x,y),       label:'Liberty'      },
+      { lon:151.2, lat:-33.9, draw: (x,y) => this._lmOperaHouse(x,y),   label:'Opera House'  },
+      { lon:31.1,  lat: 29.9, draw: (x,y) => this._lmPyramids(x,y),     label:'Pyramids'     },
     ];
-    positions.forEach(p => {
-      ctx.save();
-      ctx.translate(p.x, p.y);
-      ctx.fillStyle = '#2c3e50';
-      ctx.beginPath();
-      ctx.ellipse(0, 0, 30, 12, 0, 0, Math.PI*2);
-      ctx.fill();
-      // tail
-      ctx.beginPath();
-      ctx.moveTo(28, 0);
-      ctx.lineTo(40, -10);
-      ctx.lineTo(42, 0);
-      ctx.lineTo(40, 10);
-      ctx.closePath();
-      ctx.fill();
-      // eye
-      ctx.fillStyle = 'white';
-      ctx.beginPath(); ctx.arc(-12, -3, 3, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#111';
-      ctx.beginPath(); ctx.arc(-12, -3, 1.5, 0, Math.PI*2); ctx.fill();
-      // spout
-      ctx.strokeStyle = 'rgba(100,200,255,0.7)';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(-5, -12);
-      ctx.quadraticCurveTo(0, -28, 5, -20);
-      ctx.stroke();
-      ctx.restore();
+    const ctx = this.ctx;
+    lms.forEach(lm => {
+      const { x, y } = this._ll(lm.lon, lm.lat);
+      lm.draw(x, y);
     });
   }
 
-  // ── PLAYER PIECES ─────────────────────────────────────────
+  _lmEiffelTower(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.fillStyle = '#888';
+    ctx.beginPath(); ctx.moveTo(x,y-18); ctx.lineTo(x-4,y); ctx.lineTo(x-7,y+6); ctx.lineTo(x+7,y+6); ctx.lineTo(x+4,y); ctx.closePath(); ctx.fill();
+    ctx.fillRect(x-8,y+6,16,3); ctx.restore();
+  }
+  _lmBigBen(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.fillStyle = '#b8965a';
+    ctx.fillRect(x-3,y-16,6,18);
+    ctx.beginPath(); ctx.moveTo(x-4,y-16); ctx.lineTo(x,y-24); ctx.lineTo(x+4,y-16); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='#fff'; ctx.lineWidth=1; ctx.strokeRect(x-3,y-13,6,6); ctx.restore();
+  }
+  _lmColosseum(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.strokeStyle = '#c8a060'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.ellipse(x,y,14,9,0,0,Math.PI*2); ctx.stroke();
+    ctx.beginPath(); ctx.ellipse(x,y,9,5,0,0,Math.PI*2); ctx.stroke();
+    ctx.fillStyle='#c8a060';
+    for(let i=0;i<8;i++){
+      const a=i/8*Math.PI*2;
+      ctx.beginPath(); ctx.arc(x+Math.cos(a)*14,y+Math.sin(a)*9,1.5,0,Math.PI*2); ctx.fill();
+    }
+    ctx.restore();
+  }
+  _lmTajMahal(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.fillStyle = '#f0ece4';
+    ctx.fillRect(x-10,y-2,20,8);
+    ctx.beginPath(); ctx.arc(x,y-2,7,Math.PI,0); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x,y-9); ctx.lineTo(x-2,y-2); ctx.lineTo(x+2,y-2); ctx.closePath(); ctx.fill();
+    ctx.strokeStyle='rgba(0,0,0,0.2)'; ctx.lineWidth=0.5; ctx.strokeRect(x-10,y-2,20,8); ctx.restore();
+  }
+  _lmGreatWall(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.strokeStyle = '#c0a080'; ctx.lineWidth = 3;
+    ctx.beginPath(); ctx.moveTo(x-20,y+2); ctx.quadraticCurveTo(x,y-10,x+20,y+2); ctx.stroke();
+    for(let i=-15;i<=15;i+=5){
+      ctx.fillStyle='#c0a080';
+      ctx.fillRect(x+i,y-12,3,4);
+    }
+    ctx.restore();
+  }
+  _lmStatue(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.fillStyle = '#5b9e8c';
+    ctx.fillRect(x-3,y-2,6,10);
+    ctx.beginPath(); ctx.arc(x,y-2,5,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='#7aba9a';
+    ctx.beginPath(); ctx.moveTo(x,y-7); ctx.lineTo(x-2,y-2); ctx.lineTo(x+2,y-2); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x+3,y-4); ctx.lineTo(x+8,y-6); ctx.lineWidth=2; ctx.strokeStyle='#7aba9a'; ctx.stroke(); ctx.restore();
+  }
+  _lmOperaHouse(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.fillStyle = '#f0ece4';
+    ctx.beginPath(); ctx.moveTo(x-14,y+4); ctx.quadraticCurveTo(x-8,y-12,x,y+4); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x,y+4); ctx.quadraticCurveTo(x+8,y-8,x+14,y+4); ctx.closePath(); ctx.fill();
+    ctx.fillRect(x-16,y+4,32,3); ctx.restore();
+  }
+  _lmPyramids(x, y) {
+    const ctx = this.ctx; ctx.save();
+    ctx.fillStyle = '#d4a83a';
+    ctx.beginPath(); ctx.moveTo(x,y-16); ctx.lineTo(x-14,y+4); ctx.lineTo(x+14,y+4); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(x+10,y-10); ctx.lineTo(x+20,y+4); ctx.lineTo(x+30,y+4); ctx.closePath();
+    ctx.fillStyle='#c8a030'; ctx.fill(); ctx.restore();
+  }
+
+  // ── TILE ICON DRAWING ────────────────────────────────────────
+  _drawTileIcon(ctx, x, y, category, r) {
+    const scale = r / 18;
+    ctx.save();
+    ctx.translate(x, y - r * 0.25);
+    ctx.scale(scale * 0.6, scale * 0.6);
+    ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+    ctx.fillStyle   = 'rgba(255,255,255,0.9)';
+    ctx.lineWidth   = 2;
+    ctx.lineCap     = 'round';
+
+    switch (category) {
+      case 'geography': {
+        // compass rose
+        ctx.beginPath(); ctx.arc(0,0,8,0,Math.PI*2); ctx.stroke();
+        [[0,-9],[0,9],[-9,0],[9,0]].forEach(([dx,dy])=>{
+          ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(dx,dy); ctx.stroke();
+        });
+        break;
+      }
+      case 'mathematics': {
+        // Σ symbol
+        ctx.font = 'bold 14px serif';
+        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+        ctx.fillText('Σ', 0, 0);
+        break;
+      }
+      case 'biology': {
+        // leaf
+        ctx.beginPath();
+        ctx.moveTo(0,8); ctx.quadraticCurveTo(-8,-4,0,-10); ctx.quadraticCurveTo(8,-4,0,8);
+        ctx.fill();
+        ctx.beginPath(); ctx.moveTo(0,8); ctx.lineTo(0,-8);
+        ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.lineWidth=1; ctx.stroke();
+        break;
+      }
+      case 'general': {
+        // star
+        ctx.beginPath();
+        for(let i=0;i<5;i++){
+          const ao=i*Math.PI*2/5-Math.PI/2;
+          const ai=ao+Math.PI/5;
+          if(i===0) ctx.moveTo(Math.cos(ao)*9,Math.sin(ao)*9);
+          else ctx.lineTo(Math.cos(ao)*9,Math.sin(ao)*9);
+          ctx.lineTo(Math.cos(ai)*4,Math.sin(ai)*4);
+        }
+        ctx.closePath(); ctx.fill();
+        break;
+      }
+      case 'funfacts': {
+        // lightning bolt
+        ctx.beginPath();
+        ctx.moveTo(3,-10); ctx.lineTo(-2,0); ctx.lineTo(2,0); ctx.lineTo(-3,10); ctx.lineTo(6,0); ctx.lineTo(1,0);
+        ctx.closePath(); ctx.fill();
+        break;
+      }
+      case 'squid': {
+        // simple squid
+        ctx.beginPath(); ctx.ellipse(0,-3,5,7,0,0,Math.PI*2); ctx.fill();
+        for(let i=-4;i<=4;i+=2){
+          ctx.beginPath(); ctx.moveTo(i,4); ctx.lineTo(i+0.5,10); ctx.lineWidth=1.5; ctx.stroke();
+        }
+        ctx.beginPath(); ctx.moveTo(-3,-4); ctx.lineTo(-8,-10); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(3,-4); ctx.lineTo(8,-10); ctx.stroke();
+        break;
+      }
+      case 'memory': {
+        // card pair
+        ctx.strokeStyle='rgba(255,255,255,0.9)';
+        ctx.lineWidth=1.5;
+        ctx.strokeRect(-8,-7,9,13);
+        ctx.strokeRect(-1,-4,9,13);
+        ctx.beginPath(); ctx.arc(-3,2,3,0,Math.PI*2); ctx.stroke();
+        break;
+      }
+      case 'start': {
+        // flag
+        ctx.beginPath(); ctx.moveTo(-4,-10); ctx.lineTo(-4,9); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(-4,-10); ctx.lineTo(6,-6); ctx.lineTo(-4,-2); ctx.closePath(); ctx.fill();
+        break;
+      }
+      case 'finish': {
+        // trophy
+        ctx.beginPath(); ctx.moveTo(-7,-8); ctx.lineTo(7,-8);
+        ctx.quadraticCurveTo(7,4,0,7); ctx.quadraticCurveTo(-7,4,-7,-8); ctx.fill();
+        ctx.fillRect(-2,7,4,5); ctx.fillRect(-5,11,10,3);
+        break;
+      }
+    }
+    ctx.restore();
+  }
+
+  // ── DRAW A SINGLE TILE ───────────────────────────────────────
+  _drawTile(tile, highlighted) {
+    const ctx  = this.ctx;
+    const cat  = tile.category || 'geography';
+    const meta = CATEGORY_META[cat] || CATEGORY_META.geography;
+    const { x, y } = tile;
+
+    let r = 15;
+    if (cat === 'start' || cat === 'finish') r = 20;
+    else if (cat === 'squid' || cat === 'memory') r = 17;
+    if (highlighted) r += 3;
+
+    // Pulsing glow ring
+    if (highlighted) {
+      const pulse = Math.sin(this._glowPhase) * 0.35 + 0.65;
+      ctx.save();
+      ctx.beginPath(); ctx.arc(x, y, r + 8, 0, Math.PI*2);
+      ctx.strokeStyle = `rgba(255,220,50,${pulse})`;
+      ctx.lineWidth = 4; ctx.stroke(); ctx.restore();
+    }
+
+    // Shadow
+    ctx.save();
+    ctx.shadowColor   = 'rgba(0,0,0,0.35)';
+    ctx.shadowBlur    = 7;
+    ctx.shadowOffsetY = 3;
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.fillStyle = meta.color;
+    ctx.fill(); ctx.restore();
+
+    // White border
+    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.85)';
+    ctx.lineWidth = highlighted ? 3 : 2;
+    ctx.stroke();
+
+    // Tile number
+    ctx.fillStyle = 'white';
+    ctx.font = `bold ${highlighted ? 10 : 8}px Nunito, sans-serif`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(tile.id, x, y + r * 0.42);
+
+    // Category icon
+    this._drawTileIcon(ctx, x, y, cat, r);
+  }
+
+  // ── TILE PATH ────────────────────────────────────────────────
+  _drawPath() {
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.setLineDash([5, 4]);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)';
+    ctx.beginPath();
+    this.tiles.forEach((t, i) => {
+      if (i === 0) ctx.moveTo(t.x, t.y);
+      else         ctx.lineTo(t.x, t.y);
+    });
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // ── PLAYER PIECES ─────────────────────────────────────────────
   drawPlayers(players) {
     this.players = players;
   }
 
   _drawPlayerPieces() {
-    if (!this.players) return;
-    // Group players by tile
+    if (!this.players || !this.players.length) return;
     const byTile = {};
     for (const p of this.players) {
       if (!byTile[p.tileId]) byTile[p.tileId] = [];
@@ -675,76 +623,68 @@ class WorldMap {
       if (!tile) continue;
       const n = group.length;
       group.forEach((p, i) => {
-        const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
-        const spread = n > 1 ? 16 : 0;
+        const angle  = n > 1 ? (i / n) * Math.PI * 2 - Math.PI / 2 : 0;
+        const spread = n > 1 ? 18 : 0;
         const px = tile.x + Math.cos(angle) * spread;
         const py = tile.y + Math.sin(angle) * spread;
-        Avatars.drawPiece(this.ctx, px, py - 20, p.avatarType, p.color, 1.0);
+        Avatars.drawPiece(this.ctx, px, py - 18, p.avatarType, p.color, 0.95);
       });
     }
   }
 
-  // ── TITLE SCREEN DRAW ─────────────────────────────────────
-  drawTitle(canvas) {
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width, H = canvas.height;
-    // Ocean
-    const g = ctx.createLinearGradient(0,0,0,H);
-    g.addColorStop(0,'#4cc9f8'); g.addColorStop(1,'#2980b9');
-    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
-    // Draw simplified map in background
-    ctx.globalAlpha = 0.35;
-    this._drawNorthAmerica();
-    this._drawSouthAmerica();
-    this._drawEurope();
-    this._drawAfrica();
-    this._drawAsia();
-    this._drawAustralia();
-    ctx.globalAlpha = 1;
-    ctx.setTransform(1,0,0,1,0,0);
+  // ── CLOUDS ───────────────────────────────────────────────────
+  _drawClouds() {
+    const ctx = this.ctx;
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    const clouds = [
+      {x:80,y:45,r:14},{x:250,y:30,r:12},{x:550,y:52,r:16},
+      {x:820,y:38,r:13},{x:1100,y:32,r:14},{x:1250,y:58,r:11},
+    ];
+    clouds.forEach(c => {
+      const ox = ((c.x + this._cloudOffset) % (this.W + 80)) - 40;
+      ctx.beginPath();
+      ctx.arc(ox,c.y,c.r,0,Math.PI*2);
+      ctx.arc(ox+c.r,c.y-3,c.r*0.8,0,Math.PI*2);
+      ctx.arc(ox+c.r*2,c.y,c.r*0.9,0,Math.PI*2);
+      ctx.fill();
+    });
+    ctx.restore();
   }
 
-  // ── MAIN RENDER ───────────────────────────────────────────
+  // ── MAIN RENDER ───────────────────────────────────────────────
   render(highlightTileId) {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.W, this.H);
 
     this._drawOcean();
-    this._drawContinents();
+    this._drawCountries();
     this._drawClouds();
-    this._drawWhales();
-
-    // Landmarks
-    this._landmarks.forEach(lm => {
-      const p = this._ll(lm.lon, lm.lat);
-      lm.draw(ctx, p.x, p.y);
-    });
-
-    // Decorative map animals
-    this._animals.forEach(a => {
-      const p = this._ll(a.lon, a.lat);
-      this._drawCartoonAnimal(ctx, p.x, p.y, a.animal);
-    });
-
-    // Path
+    this._drawLandmarks();
+    this._drawAllAnimals();
+    this._drawOceanLabels();
+    this._drawCountryLabels();
     this._drawPath();
 
-    // Tiles
     this.tiles.forEach(t => {
       this._drawTile(t, t.id === highlightTileId);
     });
 
-    // Player pieces
     this._drawPlayerPieces();
   }
 
-  // ── ANIMATION LOOP ────────────────────────────────────────
+  // ── ANIMATION LOOP ────────────────────────────────────────────
   startAnimation(getState) {
     const loop = () => {
-      this._waveOffset  += 0.8;
-      this._cloudOffset += 0.15;
+      this._waveOffset  += 0.7;
+      this._cloudOffset += 0.12;
+      this._glowPhase   += 0.06;
       const state = getState();
       this.players = state.players || [];
+      if (state.tileCategories && state.tileCategories.length) {
+        this.tileCategories = state.tileCategories;
+        this.tiles = this._buildTiles(state.tileCategories);
+      }
       this.render(state.highlightTileId);
       this.animFrame = requestAnimationFrame(loop);
     };
@@ -752,39 +692,33 @@ class WorldMap {
   }
 
   stopAnimation() {
-    if (this.animFrame) cancelAnimationFrame(this.animFrame);
+    if (this.animFrame) { cancelAnimationFrame(this.animFrame); this.animFrame = null; }
   }
 
-  // ── ZOOM TO TILE REGION ───────────────────────────────────
+  // ── ZOOM ──────────────────────────────────────────────────────
   zoomToTile(tileId, mapContainer) {
     const tile = this.tiles[tileId - 1];
     if (!tile) return;
     const canvas = this.canvas;
-    const cw = canvas.offsetWidth;
-    const ch = canvas.offsetHeight;
-    const sx = cw / this.W;
-    const sy = ch / this.H;
-    const scale = 2.2;
-    const tx = (cw / 2) - (tile.x * sx * scale);
-    const ty = (ch / 2) - (tile.y * sy * scale);
-
+    const cw     = canvas.offsetWidth  || this.W;
+    const ch     = canvas.offsetHeight || this.H;
+    const sx     = cw / this.W;
+    const sy     = ch / this.H;
+    const scale  = 2.4;
+    const tx     = (cw / 2) - (tile.x * sx * scale);
+    const ty     = (ch / 2) - (tile.y * sy * scale);
     canvas.style.transformOrigin = '0 0';
-    canvas.style.transform = `scale(${scale}) translate(${tx / scale}px, ${ty / scale}px)`;
-
-    const label = document.getElementById('zoom-label');
-    if (label) {
-      label.textContent = tile.country;
-      label.classList.add('visible');
-    }
+    canvas.style.transform = `scale(${scale}) translate(${tx/scale}px,${ty/scale}px)`;
+    const lbl = document.getElementById('zoom-label');
+    if (lbl) { lbl.textContent = tile.category ? (CATEGORY_META[tile.category]||{}).label || '' : ''; lbl.classList.add('visible'); }
   }
 
   zoomOut() {
-    const canvas = this.canvas;
-    canvas.style.transformOrigin = 'center center';
-    canvas.style.transform = 'scale(1) translate(0,0)';
-    const label = document.getElementById('zoom-label');
-    if (label) label.classList.remove('visible');
+    this.canvas.style.transformOrigin = 'center center';
+    this.canvas.style.transform = 'scale(1) translate(0,0)';
+    const lbl = document.getElementById('zoom-label');
+    if (lbl) lbl.classList.remove('visible');
   }
 
-  getTile(id) { return this.tiles[id - 1]; }
+  getTile(id) { return this.tiles[id - 1] || null; }
 }
