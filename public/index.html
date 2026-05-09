@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lily &amp; Mia's Trip Around the World</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- TITLE SCREEN -->
+  <div id="screen-title" class="screen active">
+    <div class="title-scene">
+      <canvas id="title-canvas" width="1400" height="700"></canvas>
+      <div class="title-overlay">
+        <div class="title-badge">
+          <div class="title-line1">Lily &amp; Mia's</div>
+          <div class="title-line2">Trip Around</div>
+          <div class="title-line3">the World</div>
+        </div>
+        <button class="btn-primary btn-huge" id="btn-start">Start Adventure</button>
+        <button class="btn-secondary" id="btn-howtoplay">How to Play</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- HOW TO PLAY -->
+  <div id="screen-howtoplay" class="screen">
+    <div class="panel-center">
+      <h2 class="panel-title">How to Play</h2>
+      <div class="how-to-grid">
+        <div class="how-step">
+          <div class="step-icon icon-dice"></div>
+          <h3>Roll the Dice</h3>
+          <p>Roll and move your piece around the world map on your turn.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-icon icon-question"></div>
+          <h3>Answer Questions</h3>
+          <p>Answer a question about the country you landed on. Get it right to stay!</p>
+        </div>
+        <div class="how-step">
+          <div class="step-icon icon-memory"></div>
+          <h3>Memory Game</h3>
+          <p>Land on a special tile to play a memory card game with real animal photos.</p>
+        </div>
+        <div class="how-step">
+          <div class="step-icon icon-trophy"></div>
+          <h3>Win the Game</h3>
+          <p>First player to reach the finish wins the trip around the world!</p>
+        </div>
+      </div>
+      <button class="btn-primary" id="btn-back-title">Back</button>
+    </div>
+  </div>
+
+  <!-- PLAYER SETUP -->
+  <div id="screen-setup" class="screen">
+    <div class="setup-container">
+      <h2 class="panel-title">Choose Your Adventurers</h2>
+      <div class="player-count-row">
+        <span>Number of Players:</span>
+        <div class="count-btns">
+          <button class="count-btn active" data-count="2">2</button>
+          <button class="count-btn" data-count="3">3</button>
+          <button class="count-btn" data-count="4">4</button>
+        </div>
+      </div>
+
+      <div id="player-cards" class="player-cards"></div>
+
+      <div class="setup-actions">
+        <button class="btn-secondary" id="btn-setup-back">Back</button>
+        <button class="btn-primary btn-large" id="btn-play">Begin Journey!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME BOARD -->
+  <div id="screen-game" class="screen">
+    <div class="game-layout">
+      <!-- Map area -->
+      <div class="map-container" id="map-container">
+        <canvas id="map-canvas" width="1300" height="650"></canvas>
+        <div id="zoom-label" class="zoom-label"></div>
+      </div>
+
+      <!-- Side panel -->
+      <div class="side-panel">
+        <div class="game-title-small">Lily &amp; Mia's Trip</div>
+
+        <div id="player-list" class="player-list"></div>
+
+        <div class="turn-panel">
+          <div id="current-player-name" class="current-player-name"></div>
+          <div id="dice-area" class="dice-area">
+            <div id="dice-display" class="dice-display">
+              <canvas id="dice-canvas" width="80" height="80"></canvas>
+            </div>
+            <button id="btn-roll" class="btn-roll">Roll!</button>
+          </div>
+          <div id="turn-message" class="turn-message"></div>
+        </div>
+
+        <div id="tile-info" class="tile-info" style="display:none">
+          <div id="tile-country" class="tile-country"></div>
+          <div id="tile-continent" class="tile-continent"></div>
+        </div>
+
+        <button class="btn-menu" id="btn-main-menu">Main Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTION DIALOG -->
+  <div id="dialog-question" class="dialog-overlay" style="display:none">
+    <div class="dialog-box question-box">
+      <div class="question-header">
+        <div id="q-country-flag" class="q-country-flag"></div>
+        <div class="q-meta">
+          <div id="q-country-name" class="q-country-name"></div>
+          <div id="q-level-badge" class="q-level-badge"></div>
+        </div>
+      </div>
+      <div id="q-text" class="q-text"></div>
+      <div id="q-options" class="q-options"></div>
+      <div id="q-feedback" class="q-feedback" style="display:none"></div>
+      <div id="q-fact" class="q-fact" style="display:none"></div>
+      <button id="btn-next-turn" class="btn-primary" style="display:none">Next Turn</button>
+    </div>
+  </div>
+
+  <!-- MEMORY GAME DIALOG -->
+  <div id="dialog-memory" class="dialog-overlay" style="display:none">
+    <div class="dialog-box memory-box">
+      <h2 class="memory-title">Animal Memory Challenge!</h2>
+      <div id="memory-grid" class="memory-grid"></div>
+      <div id="memory-status" class="memory-status"></div>
+      <button id="btn-memory-close" class="btn-primary" style="display:none">Continue</button>
+    </div>
+  </div>
+
+  <!-- WIN SCREEN -->
+  <div id="screen-win" class="screen">
+    <canvas id="win-canvas" width="1400" height="700"></canvas>
+    <div class="win-overlay">
+      <div class="win-badge">
+        <div class="win-crown"></div>
+        <div id="win-player-name" class="win-player-name"></div>
+        <div class="win-subtitle">wins the trip around the world!</div>
+        <div id="win-avatar-display" class="win-avatar-display">
+          <canvas id="win-avatar-canvas" width="150" height="150"></canvas>
+        </div>
+      </div>
+      <button class="btn-primary btn-huge" id="btn-play-again">Play Again</button>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="js/data/questions.js"></script>
+  <script src="js/data/animals.js"></script>
+  <script src="js/WorldMap.js"></script>
+  <script src="js/Avatars.js"></script>
+  <script src="js/MemoryGame.js"></script>
+  <script src="js/GameEngine.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

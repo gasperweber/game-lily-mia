@@ -1,0 +1,13 @@
+{
+  "name": "lily-and-mia-trip-around-the-world",
+  "version": "1.0.0",
+  "description": "Lily and Mia's Trip Around the World - Educational Geography Game",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
