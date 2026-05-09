@@ -1,206 +1,5 @@
-// Question Database - Lily & Mia's Trip Around the World
-// Format: { id, country, continent, region, level (1=easy,2=medium,3=hard), question, options:[A,B,C,D], answer (0-3 index), fact }
+// questions.js — Category-based question database for Lily & Mia's Trip Around the World
 
-const QUESTION_DB = [
-
-// ============================================================
-// NORTH AMERICA
-// ============================================================
-{id:1,country:"Canada",continent:"North America",level:1,question:"What is the capital city of Canada?",options:["Toronto","Vancouver","Ottawa","Montreal"],answer:2,fact:"Ottawa has been Canada's capital since 1857, chosen by Queen Victoria."},
-{id:2,country:"Canada",continent:"North America",level:1,question:"What is Canada's national animal?",options:["Moose","Beaver","Bear","Wolf"],answer:1,fact:"The beaver appears on Canada's nickel coin and is a symbol of Canadian industry."},
-{id:3,country:"Canada",continent:"North America",level:1,question:"What is the longest river in Canada?",options:["Fraser River","St. Lawrence River","Mackenzie River","Saskatchewan River"],answer:2,fact:"The Mackenzie River stretches over 4,200 km and flows north to the Arctic Ocean."},
-{id:4,country:"Canada",continent:"North America",level:1,question:"Which ocean borders Canada to the east?",options:["Pacific Ocean","Arctic Ocean","Atlantic Ocean","Indian Ocean"],answer:2,fact:"Canada has the longest coastline in the world, touching three oceans."},
-{id:5,country:"Canada",continent:"North America",level:2,question:"How many provinces does Canada have?",options:["8","10","12","13"],answer:1,fact:"Canada has 10 provinces and 3 territories, covering 9.98 million square kilometres."},
-{id:6,country:"Canada",continent:"North America",level:2,question:"What is the name of Canada's famous waterfall on the border with the USA?",options:["Angel Falls","Victoria Falls","Niagara Falls","Iguazu Falls"],answer:2,fact:"Niagara Falls is actually three waterfalls — Horseshoe, American, and Bridal Veil."},
-{id:7,country:"Canada",continent:"North America",level:2,question:"What language is spoken alongside English as an official language in Canada?",options:["Spanish","French","Portuguese","Italian"],answer:1,fact:"The province of Quebec is predominantly French-speaking and has its own distinct culture."},
-{id:8,country:"Canada",continent:"North America",level:3,question:"Which Canadian province is the largest by area?",options:["Ontario","British Columbia","Quebec","Nunavut"],answer:3,fact:"Nunavut is Canada's largest and newest territory, created in 1999 for the Inuit people."},
-{id:9,country:"Canada",continent:"North America",level:3,question:"What percentage of the world's fresh water is found in Canada?",options:["5%","10%","20%","35%"],answer:2,fact:"Canada holds about 20% of the world's fresh surface water, including the Great Lakes."},
-{id:10,country:"Canada",continent:"North America",level:3,question:"What is the name of the indigenous people of northern Canada and Alaska?",options:["Navajo","Cherokee","Inuit","Apache"],answer:2,fact:"The Inuit have lived in the Arctic for thousands of years and are experts at surviving extreme cold."},
-
-{id:11,country:"USA",continent:"North America",level:1,question:"What is the capital of the United States?",options:["New York","Los Angeles","Chicago","Washington D.C."],answer:3,fact:"Washington D.C. stands for District of Columbia and was designed by Pierre Charles L'Enfant in 1791."},
-{id:12,country:"USA",continent:"North America",level:1,question:"How many stripes are on the American flag?",options:["13","15","20","50"],answer:0,fact:"The 13 stripes represent the original 13 colonies that declared independence from Britain."},
-{id:13,country:"USA",continent:"North America",level:1,question:"Which famous bridge is in San Francisco?",options:["Brooklyn Bridge","Golden Gate Bridge","Tower Bridge","Sydney Harbour Bridge"],answer:1,fact:"The Golden Gate Bridge opened in 1937 and took 4 years to build."},
-{id:14,country:"USA",continent:"North America",level:1,question:"What is the largest state in the USA?",options:["Texas","California","Montana","Alaska"],answer:3,fact:"Alaska is more than twice the size of Texas and was purchased from Russia in 1867 for $7.2 million."},
-{id:15,country:"USA",continent:"North America",level:2,question:"Which mountain is the highest point in North America?",options:["Mount Whitney","Mount Rainier","Denali","Pikes Peak"],answer:2,fact:"Denali (formerly Mount McKinley) stands 6,190 metres tall in Alaska."},
-{id:16,country:"USA",continent:"North America",level:2,question:"What is the name of the famous canyon in Arizona?",options:["Bryce Canyon","Zion Canyon","Grand Canyon","Antelope Canyon"],answer:2,fact:"The Grand Canyon is up to 1.6 km deep and was carved by the Colorado River over millions of years."},
-{id:17,country:"USA",continent:"North America",level:2,question:"Which Great Lake is entirely within the United States?",options:["Lake Superior","Lake Michigan","Lake Erie","Lake Ontario"],answer:1,fact:"Lake Michigan is the only Great Lake that lies entirely within the United States."},
-{id:18,country:"USA",continent:"North America",level:3,question:"In what year did the United States declare independence?",options:["1776","1789","1800","1812"],answer:0,fact:"The Declaration of Independence was signed on July 4, 1776, now celebrated as Independence Day."},
-{id:19,country:"USA",continent:"North America",level:3,question:"What is the name of the world's largest hot desert, partly in the southwestern USA?",options:["Sahara","Gobi","Mojave","Sonoran"],answer:3,fact:"The Sonoran Desert spans the southwestern USA and northwestern Mexico, home to the giant saguaro cactus."},
-{id:20,country:"USA",continent:"North America",level:3,question:"Which river forms much of the border between the USA and Mexico?",options:["Colorado River","Mississippi River","Rio Grande","Pecos River"],answer:2,fact:"The Rio Grande flows 3,060 km from Colorado to the Gulf of Mexico."},
-
-{id:21,country:"Mexico",continent:"North America",level:1,question:"What is the capital of Mexico?",options:["Guadalajara","Cancun","Mexico City","Monterrey"],answer:2,fact:"Mexico City is one of the largest cities in the world with over 21 million people in its metro area."},
-{id:22,country:"Mexico",continent:"North America",level:1,question:"What is Mexico's national dish?",options:["Paella","Tacos","Sushi","Pizza"],answer:1,fact:"Mexico's cuisine is so unique it was declared a UNESCO Intangible Cultural Heritage in 2010."},
-{id:23,country:"Mexico",continent:"North America",level:2,question:"What ancient civilization built the pyramids at Teotihuacan?",options:["Aztec","Maya","Olmec","Toltec"],answer:0,fact:"The Pyramid of the Sun at Teotihuacan is the third-largest pyramid in the world."},
-{id:24,country:"Mexico",continent:"North America",level:3,question:"What is the name of the large peninsula in southeast Mexico known for Mayan ruins?",options:["Baja California","Yucatan Peninsula","Gulf Coast","Oaxaca Coast"],answer:1,fact:"The Yucatan Peninsula is home to Chichen Itza, one of the New Seven Wonders of the World."},
-
-// ============================================================
-// CENTRAL AMERICA & CARIBBEAN
-// ============================================================
-{id:25,country:"Cuba",continent:"Central America & Caribbean",level:1,question:"What is the capital of Cuba?",options:["Santiago","Havana","Camaguey","Trinidad"],answer:1,fact:"Havana was founded by the Spanish in 1519 and is one of the oldest cities in the Americas."},
-{id:26,country:"Cuba",continent:"Central America & Caribbean",level:2,question:"Cuba is the largest island in which sea?",options:["Mediterranean Sea","Red Sea","Caribbean Sea","Coral Sea"],answer:2,fact:"Cuba covers 109,884 square kilometres making it the largest Caribbean island nation."},
-{id:27,country:"Panama",continent:"Central America & Caribbean",level:1,question:"What famous canal connects the Atlantic and Pacific oceans?",options:["Suez Canal","Panama Canal","English Channel","Kiel Canal"],answer:1,fact:"The Panama Canal saves ships up to 15,000 km compared to going around South America."},
-{id:28,country:"Panama",continent:"Central America & Caribbean",level:2,question:"How long is the Panama Canal?",options:["48 km","80 km","120 km","200 km"],answer:1,fact:"The Panama Canal was opened in 1914 after 10 years of construction and thousands of workers."},
-{id:29,country:"Costa Rica",continent:"Central America & Caribbean",level:2,question:"What percentage of Costa Rica is covered by rainforest and national parks?",options:["10%","15%","25%","50%"],answer:2,fact:"Costa Rica has no permanent army and instead invests heavily in education and the environment."},
-{id:30,country:"Costa Rica",continent:"Central America & Caribbean",level:3,question:"What does 'Pura Vida' mean in Costa Rica?",options:["Hello Friend","Pure Life","Beautiful Country","Good Morning"],answer:1,fact:"Pura Vida is Costa Rica's national motto and a way of life expressing happiness and gratitude."},
-
-// ============================================================
-// SOUTH AMERICA
-// ============================================================
-{id:31,country:"Brazil",continent:"South America",level:1,question:"What is the capital of Brazil?",options:["Rio de Janeiro","Sao Paulo","Brasilia","Salvador"],answer:2,fact:"Brasilia was built from scratch as a planned city and became Brazil's capital in 1960."},
-{id:32,country:"Brazil",continent:"South America",level:1,question:"What is the name of the largest rainforest in the world, mostly in Brazil?",options:["Congo Rainforest","Amazon Rainforest","Daintree Rainforest","Tongass Rainforest"],answer:1,fact:"The Amazon Rainforest produces 20% of the world's oxygen and is home to 10% of all species on Earth."},
-{id:33,country:"Brazil",continent:"South America",level:1,question:"What is Brazil's most famous sport?",options:["Basketball","Cricket","Football (Soccer)","Baseball"],answer:2,fact:"Brazil has won the FIFA World Cup 5 times — more than any other country."},
-{id:34,country:"Brazil",continent:"South America",level:2,question:"What is the name of the famous giant statue overlooking Rio de Janeiro?",options:["The David","Statue of Liberty","Christ the Redeemer","The Thinker"],answer:2,fact:"Christ the Redeemer stands 38 metres tall on Corcovado Mountain and was completed in 1931."},
-{id:35,country:"Brazil",continent:"South America",level:2,question:"The Amazon River flows into which ocean?",options:["Pacific Ocean","Indian Ocean","Southern Ocean","Atlantic Ocean"],answer:3,fact:"The Amazon River carries 20% of all freshwater that flows into the world's oceans."},
-{id:36,country:"Brazil",continent:"South America",level:3,question:"How many species of bird live in the Amazon rainforest?",options:["Over 100","Over 500","Over 1,000","Over 3,000"],answer:2,fact:"The Amazon is home to over 1,300 bird species, including macaws, toucans and harpy eagles."},
-{id:37,country:"Argentina",continent:"South America",level:1,question:"What is the capital of Argentina?",options:["Montevideo","Santiago","Lima","Buenos Aires"],answer:3,fact:"Buenos Aires means 'fair winds' in Spanish and is often called the 'Paris of South America.'"},
-{id:38,country:"Argentina",continent:"South America",level:2,question:"What famous dance originated in Argentina?",options:["Samba","Tango","Salsa","Merengue"],answer:1,fact:"The tango was born in the working-class neighbourhoods of Buenos Aires in the late 19th century."},
-{id:39,country:"Argentina",continent:"South America",level:3,question:"Which mountain range runs along the western edge of South America?",options:["Himalayas","Rocky Mountains","Andes","Alps"],answer:2,fact:"The Andes are the world's longest mountain range at 7,000 km, stretching across 7 countries."},
-{id:40,country:"Peru",continent:"South America",level:1,question:"What ancient Incan citadel is found high in the mountains of Peru?",options:["Teotihuacan","Chichen Itza","Machu Picchu","Angkor Wat"],answer:2,fact:"Machu Picchu was built around 1450 AD and sits 2,430 metres above sea level in the Andes."},
-{id:41,country:"Peru",continent:"South America",level:2,question:"What is the world's highest navigable lake, on the border of Peru and Bolivia?",options:["Lake Titicaca","Lake Baikal","Lake Victoria","Lake Superior"],answer:0,fact:"Lake Titicaca sits 3,812 metres above sea level and covers 8,372 square kilometres."},
-{id:42,country:"Chile",continent:"South America",level:2,question:"What is the driest desert in the world, found in Chile?",options:["Sahara","Gobi","Atacama","Patagonian"],answer:2,fact:"Parts of the Atacama Desert have not received rain in over 400 years."},
-{id:43,country:"Ecuador",continent:"South America",level:2,question:"The Galapagos Islands belong to which country?",options:["Peru","Colombia","Ecuador","Brazil"],answer:2,fact:"Charles Darwin visited the Galapagos in 1835, which inspired his theory of evolution."},
-{id:44,country:"Colombia",continent:"South America",level:2,question:"Colombia is the only country in South America with coastlines on both the Pacific Ocean and which other sea?",options:["Red Sea","Caribbean Sea","Coral Sea","Tasman Sea"],answer:1,fact:"Colombia's Caribbean coast has beautiful coral reefs and colonial cities like Cartagena."},
-
-// ============================================================
-// EUROPE
-// ============================================================
-{id:45,country:"United Kingdom",continent:"Europe",level:1,question:"What is the capital of the United Kingdom?",options:["Manchester","Edinburgh","Birmingham","London"],answer:3,fact:"London has been a major city for over 2,000 years, founded by the Romans as 'Londinium.'"},
-{id:46,country:"United Kingdom",continent:"Europe",level:1,question:"What famous clock tower is in London?",options:["Eiffel Tower","Big Ben","Leaning Tower","Sagrada Familia"],answer:1,fact:"Big Ben is actually the name of the bell inside Elizabeth Tower — it weighs 13.7 tonnes."},
-{id:47,country:"United Kingdom",continent:"Europe",level:2,question:"What ancient stone monument is located in Wiltshire, England?",options:["Colosseum","Stonehenge","Parthenon","Pantheon"],answer:1,fact:"Stonehenge was built between 3000 and 1500 BC and its purpose remains a mystery."},
-{id:48,country:"United Kingdom",continent:"Europe",level:3,question:"The UK is made up of how many countries?",options:["2","3","4","5"],answer:2,fact:"England, Scotland, Wales, and Northern Ireland make up the United Kingdom."},
-{id:49,country:"France",continent:"Europe",level:1,question:"What is the capital of France?",options:["Lyon","Nice","Paris","Marseille"],answer:2,fact:"Paris is called the 'City of Light' and is visited by over 80 million tourists every year."},
-{id:50,country:"France",continent:"Europe",level:1,question:"What is the name of the famous tower in Paris?",options:["Empire State Building","Eiffel Tower","Big Ben","Burj Khalifa"],answer:1,fact:"The Eiffel Tower was built in 1889 for the World's Fair and was supposed to be torn down after 20 years."},
-{id:51,country:"France",continent:"Europe",level:2,question:"What famous bicycle race takes place in France every July?",options:["Giro d'Italia","Vuelta a España","Tour de France","Paris-Roubaix"],answer:2,fact:"The Tour de France is 21 stages covering about 3,500 km and takes about 3 weeks."},
-{id:52,country:"France",continent:"Europe",level:3,question:"What is the name of the famous prehistoric cave paintings in France?",options:["Altamira","Lascaux","Chauvet","Pech Merle"],answer:1,fact:"The Lascaux cave paintings are over 17,000 years old and show bison, horses, and deer."},
-{id:53,country:"Germany",continent:"Europe",level:1,question:"What is the capital of Germany?",options:["Munich","Hamburg","Frankfurt","Berlin"],answer:3,fact:"Berlin's Brandenburg Gate was a symbol of the Cold War division of Germany."},
-{id:54,country:"Germany",continent:"Europe",level:2,question:"What is Germany's famous annual beer festival called?",options:["Mardi Gras","Oktoberfest","Carnival","Fasching"],answer:1,fact:"Oktoberfest in Munich attracts over 6 million visitors each year and has been held since 1810."},
-{id:55,country:"Italy",continent:"Europe",level:1,question:"What is the capital of Italy?",options:["Milan","Venice","Florence","Rome"],answer:3,fact:"Rome is called the 'Eternal City' and has been continuously inhabited for over 2,700 years."},
-{id:56,country:"Italy",continent:"Europe",level:1,question:"Which famous leaning building is found in Pisa, Italy?",options:["Leaning Tower of Pisa","Colosseum","Parthenon","Eiffel Tower"],answer:0,fact:"The Leaning Tower of Pisa leans because the soil on one side is too soft — it took 177 years to build."},
-{id:57,country:"Italy",continent:"Europe",level:2,question:"What is the name of the ancient Roman amphitheatre in Rome?",options:["Pantheon","Colosseum","Forum","Circus Maximus"],answer:1,fact:"The Colosseum could hold up to 80,000 spectators and hosted gladiator fights for 400 years."},
-{id:58,country:"Italy",continent:"Europe",level:3,question:"Which Italian city is built on water with canals instead of roads?",options:["Naples","Florence","Venice","Genoa"],answer:2,fact:"Venice is built on 118 small islands connected by 400 bridges over 177 canals."},
-{id:59,country:"Spain",continent:"Europe",level:1,question:"What is the capital of Spain?",options:["Barcelona","Seville","Valencia","Madrid"],answer:3,fact:"Madrid is the highest capital city in the European Union at 667 metres above sea level."},
-{id:60,country:"Spain",continent:"Europe",level:2,question:"What famous artistic landmark in Barcelona is still being built after 140 years?",options:["Alhambra","Guggenheim","Sagrada Familia","Park Güell"],answer:2,fact:"Architect Antoni Gaudí began Sagrada Familia in 1882; it is expected to finish around 2026."},
-{id:61,country:"Greece",continent:"Europe",level:1,question:"What is the capital of Greece?",options:["Thessaloniki","Crete","Corfu","Athens"],answer:3,fact:"Athens is one of the oldest cities in the world with a recorded history spanning 3,400 years."},
-{id:62,country:"Greece",continent:"Europe",level:2,question:"What ancient temple sits on the Acropolis in Athens?",options:["Pantheon","Parthenon","Temple of Zeus","Colosseum"],answer:1,fact:"The Parthenon was built in 447–438 BC and dedicated to Athena, goddess of wisdom."},
-{id:63,country:"Netherlands",continent:"Europe",level:1,question:"What are the Netherlands famous for growing in colourful fields?",options:["Sunflowers","Roses","Tulips","Lavender"],answer:2,fact:"The Netherlands exports over 4 billion tulip bulbs every year to countries around the world."},
-{id:64,country:"Norway",continent:"Europe",level:2,question:"What are the long, narrow sea inlets carved by glaciers in Norway called?",options:["Bays","Deltas","Fjords","Lagoons"],answer:2,fact:"Norway's Sognefjord is the world's deepest fjord at 1,303 metres and stretches 204 km inland."},
-{id:65,country:"Norway",continent:"Europe",level:2,question:"What colourful natural phenomenon can be seen in Norway's night sky?",options:["Midnight Sun","Northern Lights","Lightning Storm","Meteor Shower"],answer:1,fact:"The Northern Lights (Aurora Borealis) are caused by solar particles hitting Earth's magnetic field."},
-{id:66,country:"Finland",continent:"Europe",level:2,question:"Finland has how many lakes?",options:["Over 10,000","Over 50,000","Over 100,000","Over 200,000"],answer:2,fact:"Finland has 187,888 lakes making it the country with the most lakes per area in the world."},
-{id:67,country:"Iceland",continent:"Europe",level:2,question:"Iceland sits on the boundary of which two tectonic plates?",options:["Pacific and Eurasian","North American and Eurasian","African and Eurasian","Antarctic and American"],answer:1,fact:"Iceland is geologically young and sits on a hotspot; it gets 2.5 cm wider every year."},
-{id:68,country:"Russia",continent:"Europe",level:1,question:"What is the capital of Russia?",options:["St. Petersburg","Siberia","Vladivostok","Moscow"],answer:3,fact:"Moscow's Kremlin is one of the largest medieval fortresses in the world, built in 1482."},
-{id:69,country:"Russia",continent:"Europe",level:2,question:"Russia is the world's largest country by area — roughly how large is it?",options:["Same as Canada","Twice the size of Canada","Three times USA","Largest in Europe only"],answer:0,fact:"Russia covers 17.1 million square kilometres — about the same as Canada and the USA combined."},
-{id:70,country:"Russia",continent:"Europe",level:3,question:"What is the name of the world's deepest lake, located in Siberia, Russia?",options:["Lake Superior","Lake Baikal","Lake Tanganyika","Caspian Sea"],answer:1,fact:"Lake Baikal is 1,642 metres deep and holds 20% of the world's unfrozen fresh surface water."},
-{id:71,country:"Turkey",continent:"Europe",level:2,question:"Istanbul in Turkey is the only city in the world that lies on two which two continents?",options:["Africa and Asia","Europe and Africa","Europe and Asia","Asia and America"],answer:2,fact:"The Bosphorus Strait divides Istanbul between Europe and Asia."},
-{id:72,country:"Portugal",continent:"Europe",level:2,question:"Portugal is known for its age of exploration. Which explorer, sailing for Portugal, was the first to reach India by sea?",options:["Christopher Columbus","Ferdinand Magellan","Vasco da Gama","Bartolomeu Dias"],answer:2,fact:"Vasco da Gama reached India in 1498, opening a sea trade route between Europe and Asia."},
-
-// ============================================================
-// AFRICA
-// ============================================================
-{id:73,country:"Egypt",continent:"Africa",level:1,question:"What ancient monument is found near Cairo, Egypt?",options:["Colosseum","Stonehenge","Great Pyramid of Giza","Machu Picchu"],answer:2,fact:"The Great Pyramid of Giza was built around 2560 BC and was the world's tallest structure for 3,800 years."},
-{id:74,country:"Egypt",continent:"Africa",level:1,question:"What is the name of Egypt's longest river?",options:["Amazon River","Congo River","Nile River","Niger River"],answer:2,fact:"The Nile is 6,650 km long and is considered the world's longest river."},
-{id:75,country:"Egypt",continent:"Africa",level:2,question:"What ancient script did Egyptians use to write in pictures?",options:["Cuneiform","Hieroglyphics","Sanskrit","Runes"],answer:1,fact:"The Rosetta Stone, discovered in 1799, was the key to understanding Egyptian hieroglyphics."},
-{id:76,country:"Morocco",continent:"Africa",level:2,question:"What mountain range runs through Morocco?",options:["Alps","Andes","Atlas Mountains","Drakensberg"],answer:2,fact:"The Atlas Mountains span Morocco, Algeria, and Tunisia and contain North Africa's highest peak, Toubkal."},
-{id:77,country:"Morocco",continent:"Africa",level:2,question:"Morocco borders what large desert on its southern side?",options:["Kalahari","Atacama","Arabian","Sahara"],answer:3,fact:"The Sahara Desert is the largest hot desert in the world, covering 9.2 million square kilometres."},
-{id:78,country:"Nigeria",continent:"Africa",level:2,question:"What is the most populous country in Africa?",options:["Egypt","Ethiopia","Nigeria","South Africa"],answer:2,fact:"Nigeria has over 220 million people and is the 7th most populous country in the world."},
-{id:79,country:"Kenya",continent:"Africa",level:1,question:"What is the capital of Kenya?",options:["Lagos","Nairobi","Mombasa","Kampala"],answer:1,fact:"Nairobi is home to the only national park in the world located within a capital city."},
-{id:80,country:"Kenya",continent:"Africa",level:2,question:"What is the name of the great animal migration that crosses Kenya and Tanzania every year?",options:["The Monarch Migration","The Great Migration","The Arctic Migration","The Salmon Run"],answer:1,fact:"Over 1.5 million wildebeest and zebras travel 1,800 km each year in search of fresh grass."},
-{id:81,country:"Kenya",continent:"Africa",level:3,question:"Mount Kenya is Africa's second highest peak. Which is the highest?",options:["Mount Kilimanjaro","Table Mountain","Ras Dashen","Mount Elgon"],answer:0,fact:"Mount Kilimanjaro in Tanzania stands 5,895 metres and is Africa's highest mountain."},
-{id:82,country:"Tanzania",continent:"Africa",level:1,question:"The largest elephant in the world lives on land. Where in Africa do most African elephants live?",options:["North Africa","East and Southern Africa","West Africa","Central Africa"],answer:1,fact:"African elephants can weigh up to 6,000 kg and are the world's largest land animals."},
-{id:83,country:"Tanzania",continent:"Africa",level:2,question:"What is the name of Africa's largest lake, located between Tanzania, Uganda and Kenya?",options:["Lake Malawi","Lake Tanganyika","Lake Chad","Lake Victoria"],answer:3,fact:"Lake Victoria is 68,870 square kilometres and the world's largest tropical lake."},
-{id:84,country:"South Africa",continent:"Africa",level:1,question:"How many capitals does South Africa have?",options:["1","2","3","4"],answer:2,fact:"South Africa has three capitals: Pretoria (executive), Cape Town (legislative), and Bloemfontein (judicial)."},
-{id:85,country:"South Africa",continent:"Africa",level:2,question:"What famous national park in South Africa is home to the 'Big Five' animals?",options:["Serengeti","Kruger","Etosha","Okavango"],answer:1,fact:"The Big Five are lion, leopard, rhinoceros, elephant, and Cape buffalo."},
-{id:86,country:"South Africa",continent:"Africa",level:3,question:"Where do African penguins live near Cape Town?",options:["Robben Island","Boulders Beach","Cape of Good Hope","Table Mountain"],answer:1,fact:"African penguins were nearly hunted to extinction but are now protected at Boulders Beach."},
-{id:87,country:"Ethiopia",continent:"Africa",level:2,question:"Ethiopia is the birthplace of what popular drink consumed worldwide?",options:["Tea","Coca-Cola","Coffee","Hot Chocolate"],answer:2,fact:"Legend says a goat herder named Kaldi discovered coffee when his goats ate the berries and became energetic."},
-{id:88,country:"Madagascar",continent:"Africa",level:2,question:"What percentage of Madagascar's animals are found nowhere else on Earth?",options:["25%","50%","75%","90%"],answer:3,fact:"Madagascar split from Africa 165 million years ago, allowing unique evolution — 90% of wildlife is endemic."},
-{id:89,country:"Madagascar",continent:"Africa",level:3,question:"What unique primate is found only in Madagascar?",options:["Chimpanzee","Gorilla","Lemur","Baboon"],answer:2,fact:"There are over 100 species of lemur in Madagascar, including the ring-tailed lemur."},
-{id:90,country:"Ghana",continent:"Africa",level:2,question:"Ghana was the first sub-Saharan African country to gain independence. In which year?",options:["1945","1957","1963","1970"],answer:1,fact:"Ghana gained independence from Britain on March 6, 1957, under President Kwame Nkrumah."},
-
-// ============================================================
-// MIDDLE EAST
-// ============================================================
-{id:91,country:"Saudi Arabia",continent:"Middle East",level:1,question:"What valuable resource is Saudi Arabia most famous for producing?",options:["Gold","Diamonds","Oil","Iron"],answer:2,fact:"Saudi Arabia has about 17% of the world's proven oil reserves."},
-{id:92,country:"Saudi Arabia",continent:"Middle East",level:2,question:"What is the tallest building in the world, located near Saudi Arabia in Dubai?",options:["Burj Khalifa","Shanghai Tower","Empire State Building","Abraj Al-Bait"],answer:0,fact:"The Burj Khalifa in Dubai stands 828 metres tall with 163 floors."},
-{id:93,country:"Saudi Arabia",continent:"Middle East",level:2,question:"What major desert covers most of the Arabian Peninsula?",options:["Sahara","Rub'al Khali","Gobi","Kalahari"],answer:1,fact:"The Rub'al Khali or 'Empty Quarter' is the world's largest continuous sand desert."},
-{id:94,country:"Jordan",continent:"Middle East",level:2,question:"What ancient city carved into rose-red rock is Jordan's most famous attraction?",options:["Petra","Palmyra","Jerash","Aqaba"],answer:0,fact:"Petra was carved by the Nabataean people over 2,000 years ago and is called the 'Rose City.'"},
-{id:95,country:"Israel",continent:"Middle East",level:2,question:"The Dead Sea borders Israel and Jordan. Why is it called 'dead'?",options:["It has no waves","No fish or plants can survive there","It is underground","It smells bad"],answer:1,fact:"The Dead Sea is 10 times saltier than the ocean — the extreme salt prevents almost all life."},
-{id:96,country:"UAE",continent:"Middle East",level:2,question:"In which country is the city of Dubai located?",options:["Saudi Arabia","Qatar","UAE","Bahrain"],answer:2,fact:"The UAE (United Arab Emirates) is a federation of 7 emirates, with Dubai and Abu Dhabi being the largest."},
-
-// ============================================================
-// SOUTH ASIA
-// ============================================================
-{id:97,country:"India",continent:"South Asia",level:1,question:"What is the capital of India?",options:["Mumbai","Kolkata","Chennai","New Delhi"],answer:3,fact:"New Delhi was built as the capital of British India and became the capital of independent India in 1947."},
-{id:98,country:"India",continent:"South Asia",level:1,question:"What is the name of the famous white marble monument in Agra, India?",options:["Colosseum","Angkor Wat","Taj Mahal","Parthenon"],answer:2,fact:"The Taj Mahal was built by Emperor Shah Jahan in memory of his wife and took 22 years to complete."},
-{id:99,country:"India",continent:"South Asia",level:1,question:"What is the sacred river in India where millions of Hindus come to bathe?",options:["Amazon","Yangtze","Nile","Ganges"],answer:3,fact:"The Ganges River is 2,525 km long and is considered sacred by over 1 billion Hindu people."},
-{id:100,country:"India",continent:"South Asia",level:2,question:"India is home to what percentage of the world's tigers?",options:["20%","40%","70%","90%"],answer:2,fact:"India has over 3,000 wild Bengal tigers, about 70% of the world's total tiger population."},
-{id:101,country:"India",continent:"South Asia",level:2,question:"What is the name of the world's highest mountain range, found in India and neighbouring countries?",options:["Andes","Alps","Rocky Mountains","Himalayas"],answer:3,fact:"The Himalayas contain 10 of the world's 14 peaks above 8,000 metres, including Mount Everest."},
-{id:102,country:"India",continent:"South Asia",level:3,question:"What is India's national animal?",options:["Asian Elephant","Snow Leopard","Bengal Tiger","Indian Cobra"],answer:2,fact:"The Bengal Tiger was chosen as India's national animal in 1973 when Project Tiger was launched to protect it."},
-{id:103,country:"Nepal",continent:"South Asia",level:1,question:"What is the world's highest mountain, located in Nepal?",options:["K2","Kangchenjunga","Mount Everest","Lhotse"],answer:2,fact:"Mount Everest stands 8,849 metres above sea level and was first climbed by Hillary and Tenzing in 1953."},
-{id:104,country:"Nepal",continent:"South Asia",level:2,question:"What is the capital of Nepal?",options:["Pokhara","Bhaktapur","Kathmandu","Lalitpur"],answer:2,fact:"Kathmandu Valley has seven UNESCO World Heritage Sites within a small area."},
-{id:105,country:"Sri Lanka",continent:"South Asia",level:2,question:"Sri Lanka is the world's largest producer of which spice?",options:["Pepper","Turmeric","Cinnamon","Ginger"],answer:2,fact:"Sri Lanka (formerly Ceylon) produces about 80-90% of the world's true cinnamon."},
-
-// ============================================================
-// EAST ASIA
-// ============================================================
-{id:106,country:"China",continent:"East Asia",level:1,question:"What is the capital of China?",options:["Shanghai","Guangzhou","Chengdu","Beijing"],answer:3,fact:"Beijing has been China's capital for over 700 years and means 'Northern Capital' in Chinese."},
-{id:107,country:"China",continent:"East Asia",level:1,question:"What is the name of the famous wall that stretches across northern China?",options:["Hadrian's Wall","The Great Wall of China","Aurelian Walls","Servian Wall"],answer:1,fact:"The Great Wall of China stretches over 21,000 km and took over 1,000 years to build."},
-{id:108,country:"China",continent:"East Asia",level:2,question:"What giant black-and-white bear is found only in China?",options:["Polar Bear","Grizzly Bear","Giant Panda","Spectacled Bear"],answer:2,fact:"Only about 1,800 giant pandas exist in the wild, living in bamboo forests in central China."},
-{id:109,country:"China",continent:"East Asia",level:2,question:"The Yangtze River is the longest river in Asia. Where does it flow from?",options:["Himalayas to Yellow Sea","Tibetan Plateau to East China Sea","Mongolia to South China Sea","Gobi Desert to Pacific"],answer:1,fact:"The Yangtze River stretches 6,380 km and is home to the world's largest hydroelectric dam — Three Gorges."},
-{id:110,country:"China",continent:"East Asia",level:3,question:"China is the world's most populous country with approximately how many people?",options:["800 million","1.1 billion","1.4 billion","2 billion"],answer:2,fact:"China has about 1.4 billion people, though India has recently surpassed it as the most populous country."},
-{id:111,country:"Japan",continent:"East Asia",level:1,question:"What is the capital of Japan?",options:["Osaka","Kyoto","Hiroshima","Tokyo"],answer:3,fact:"Tokyo is the world's most populous city metropolitan area with over 37 million people."},
-{id:112,country:"Japan",continent:"East Asia",level:1,question:"What is Japan's famous snow-capped volcano called?",options:["Mount Fuji","Mount Etna","Mount Vesuvius","Kilauea"],answer:0,fact:"Mount Fuji is 3,776 metres tall and is Japan's highest mountain, visible from Tokyo on clear days."},
-{id:113,country:"Japan",continent:"East Asia",level:2,question:"Japan is made up of approximately how many islands?",options:["Over 100","Over 1,000","Over 6,800","Over 20,000"],answer:2,fact:"Japan has 6,852 islands, but 97% of the population lives on just 4 main islands."},
-{id:114,country:"Japan",continent:"East Asia",level:2,question:"What traditional Japanese art involves folding paper into shapes?",options:["Ikebana","Bonsai","Origami","Manga"],answer:2,fact:"Origami comes from the Japanese words 'oru' (to fold) and 'kami' (paper)."},
-{id:115,country:"Japan",continent:"East Asia",level:3,question:"What is the name of Japan's famous bullet train?",options:["Maglev","Shinkansen","TGV","Eurostar"],answer:1,fact:"The Shinkansen launched in 1964 and can travel at speeds of up to 320 km/h."},
-{id:116,country:"South Korea",continent:"East Asia",level:2,question:"What is the capital of South Korea?",options:["Busan","Incheon","Daegu","Seoul"],answer:3,fact:"Seoul is one of the world's most densely populated cities with over 25 million people in its metro area."},
-{id:117,country:"Mongolia",continent:"East Asia",level:2,question:"What is the traditional dwelling of nomadic people in Mongolia called?",options:["Tepee","Igloo","Yurt","Pagoda"],answer:2,fact:"Mongolian yurts (called gers) can be assembled or dismantled in under an hour."},
-{id:118,country:"Mongolia",continent:"East Asia",level:3,question:"What great empire was founded by Genghis Khan in Mongolia?",options:["Roman Empire","Ottoman Empire","Mongol Empire","British Empire"],answer:2,fact:"At its peak, the Mongol Empire was the largest contiguous land empire in history, covering 24 million km²."},
-
-// ============================================================
-// SOUTHEAST ASIA
-// ============================================================
-{id:119,country:"Thailand",continent:"Southeast Asia",level:1,question:"What is the capital of Thailand?",options:["Chiang Mai","Pattaya","Bangkok","Phuket"],answer:2,fact:"Bangkok's full ceremonial name is one of the longest place names in the world with 169 characters."},
-{id:120,country:"Thailand",continent:"Southeast Asia",level:2,question:"What is Thailand's national animal?",options:["Tiger","Elephant","Crocodile","Komodo Dragon"],answer:1,fact:"Thailand's elephants are sacred; white elephants are especially revered and associated with royalty."},
-{id:121,country:"Vietnam",continent:"Southeast Asia",level:2,question:"What is the capital of Vietnam?",options:["Ho Chi Minh City","Da Nang","Hue","Hanoi"],answer:3,fact:"Hanoi has been the capital of Vietnam since 1010 AD and means 'city inside the rivers' in Vietnamese."},
-{id:122,country:"Philippines",continent:"Southeast Asia",level:2,question:"The Philippines is an archipelago of how many islands?",options:["Over 1,000","Over 3,000","Over 7,600","Over 15,000"],answer:2,fact:"The Philippines has 7,641 islands and is home to the world's second largest coral triangle."},
-{id:123,country:"Indonesia",continent:"Southeast Asia",level:1,question:"Indonesia is the world's largest archipelago nation. Roughly how many islands does it have?",options:["Over 1,000","Over 5,000","Over 17,000","Over 30,000"],answer:2,fact:"Indonesia's 17,000 islands span 5,150 km, wider than the United States from coast to coast."},
-{id:124,country:"Indonesia",continent:"Southeast Asia",level:2,question:"What huge lizard found only in Indonesia can grow up to 3 metres long?",options:["Monitor Lizard","Iguana","Komodo Dragon","Gila Monster"],answer:2,fact:"Komodo dragons have venomous saliva and can smell prey from 9.5 km away."},
-{id:125,country:"Indonesia",continent:"Southeast Asia",level:3,question:"What is the name of the famous temple complex in Bali, Indonesia?",options:["Borobudur","Prambanan","Tanah Lot","Besakih"],answer:0,fact:"Borobudur is the world's largest Buddhist temple, built in the 9th century with 2 million stone blocks."},
-
-// ============================================================
-// OCEANIA
-// ============================================================
-{id:126,country:"Australia",continent:"Oceania",level:1,question:"What is the capital of Australia?",options:["Sydney","Melbourne","Brisbane","Canberra"],answer:3,fact:"Canberra was built as a compromise capital because Sydney and Melbourne both wanted to be the capital."},
-{id:127,country:"Australia",continent:"Oceania",level:1,question:"What is Australia's famous large red rock called?",options:["Ayers Peak","Devils Tower","Uluru","Red Rock Canyon"],answer:2,fact:"Uluru (also called Ayers Rock) is sacred to the Anangu Aboriginal people and is 348 metres tall."},
-{id:128,country:"Australia",continent:"Oceania",level:1,question:"What is the name of Australia's famous jumping marsupial?",options:["Koala","Wombat","Kangaroo","Wallaby"],answer:2,fact:"Kangaroos can jump 9 metres in a single bound and travel at 70 km/h."},
-{id:129,country:"Australia",continent:"Oceania",level:2,question:"What is the world's largest coral reef system, off Australia's northeast coast?",options:["Mesoamerican Reef","Belize Barrier Reef","Andros Barrier Reef","Great Barrier Reef"],answer:3,fact:"The Great Barrier Reef is over 2,300 km long and is the only living structure visible from space."},
-{id:130,country:"Australia",continent:"Oceania",level:2,question:"What egg-laying mammal is unique to Australia and New Guinea?",options:["Platypus","Echidna","Both platypus and echidna","Tasmanian Devil"],answer:2,fact:"The platypus and echidna are the world's only monotremes — egg-laying mammals."},
-{id:131,country:"Australia",continent:"Oceania",level:3,question:"Australia's Aboriginal people have lived on the continent for how long?",options:["10,000 years","30,000 years","50,000 years","Over 65,000 years"],answer:3,fact:"Aboriginal Australians have the world's oldest continuous culture, with evidence of habitation over 65,000 years ago."},
-{id:132,country:"New Zealand",continent:"Oceania",level:1,question:"What is the capital of New Zealand?",options:["Auckland","Christchurch","Dunedin","Wellington"],answer:3,fact:"Wellington is the southernmost capital city in the world."},
-{id:133,country:"New Zealand",continent:"Oceania",level:2,question:"What is the name of the flightless bird that is New Zealand's national symbol?",options:["Penguin","Emu","Kiwi","Cassowary"],answer:2,fact:"The kiwi is nocturnal, has no wings, and lays an egg that is 20% of the mother's body weight."},
-{id:134,country:"New Zealand",continent:"Oceania",level:3,question:"New Zealand was one of the last places on Earth to be settled by humans. Which people first arrived?",options:["British settlers","Dutch explorers","Maori people","Aboriginal Australians"],answer:2,fact:"The Maori arrived from Polynesia between 1250 and 1300 AD, making New Zealand one of the last habitable places colonised."},
-
-// ============================================================
-// ARCTIC / GREENLAND
-// ============================================================
-{id:135,country:"Greenland",continent:"Arctic",level:1,question:"Greenland is the world's largest island. Which country does it belong to?",options:["Norway","Canada","USA","Denmark"],answer:3,fact:"Despite being geographically closer to Canada, Greenland has been a Danish territory since 1814."},
-{id:136,country:"Greenland",continent:"Arctic",level:2,question:"What covers about 80% of Greenland's surface?",options:["Forest","Desert","Ice sheet","Tundra"],answer:2,fact:"The Greenland Ice Sheet contains 7 metres worth of potential sea level rise if it melted completely."},
-{id:137,country:"Greenland",continent:"Arctic",level:3,question:"If Greenland's ice sheet melted, by how much would global sea levels rise?",options:["1 metre","3 metres","7 metres","20 metres"],answer:2,fact:"Scientists monitor Greenland's ice closely as it is losing about 280 billion tonnes of ice per year."},
-
-// ============================================================
-// EXTRA BONUS QUESTIONS
-// ============================================================
-{id:138,country:"Antarctica",continent:"Antarctica",level:1,question:"Which continent is the coldest on Earth?",options:["Arctic","Asia","Antarctica","Greenland"],answer:2,fact:"The lowest temperature ever recorded on Earth was -89.2°C in Antarctica in 1983."},
-{id:139,country:"Antarctica",continent:"Antarctica",level:2,question:"How many countries have claimed territory in Antarctica?",options:["None — it belongs to everyone","3","7","12"],answer:2,fact:"7 countries claim Antarctic territory but the Antarctic Treaty of 1959 suspends these claims for peaceful cooperation."},
-{id:140,country:"Antarctica",continent:"Antarctica",level:3,question:"What is the thickness of the ice sheet in some parts of Antarctica?",options:["500 metres","1 km","2.3 km","5 km"],answer:2,fact:"The ice sheet can be up to 4.8 km thick in some places and contains 70% of Earth's fresh water."},
-{id:141,country:"Bolivia",continent:"South America",level:2,question:"Bolivia has the world's largest salt flat. What is it called?",options:["Atacama Salt Flat","Bonneville Salt Flats","Salar de Uyuni","Dead Sea"],answer:2,fact:"Salar de Uyuni covers 10,582 square km and is so flat it is used to calibrate satellites."},
-{id:142,country:"Venezuela",continent:"South America",level:2,question:"What is the name of the world's highest waterfall, found in Venezuela?",options:["Niagara Falls","Iguazu Falls","Victoria Falls","Angel Falls"],answer:3,fact:"Angel Falls drops 979 metres — so high that the water turns to mist before reaching the bottom."},
-{id:143,country:"Colombia",continent:"South America",level:3,question:"Colombia is the world's top producer of which precious gemstone?",options:["Diamonds","Rubies","Emeralds","Sapphires"],answer:2,fact:"Colombia produces over 50% of the world's emeralds, prized for their deep green colour."},
-{id:144,country:"Iceland",continent:"Europe",level:3,question:"Iceland has no trees. What covers much of the island instead?",options:["Grassland","Lava fields and moss","Ice and snow","Desert"],answer:1,fact:"Iceland was once forested but Norse settlers cleared the trees; today volcanic lava fields and moss cover much of the land."},
-{id:145,country:"Finland",continent:"Europe",level:3,question:"Finland is the home of which legendary winter gift-giver, whose workshop is in Rovaniemi?",options:["Father Christmas","Sinterklaas","Saint Nicholas","All of these"],answer:3,fact:"Rovaniemi in Finnish Lapland is the official home of Santa Claus and receives half a million visitors each Christmas."},
-
-]; // End QUESTION_DB
-
-// Utility: shuffle array in place
 function shuffleArray(arr) {
   for (let i = arr.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -209,28 +8,253 @@ function shuffleArray(arr) {
   return arr;
 }
 
-// Build a lookup by (country, level) for fast access
-function buildQuestionMap() {
-  const map = {};
-  for (const q of QUESTION_DB) {
-    const key = q.country + '|' + q.level;
-    if (!map[key]) map[key] = [];
-    map[key].push(q);
-  }
-  return map;
+const CATEGORY_META = {
+  geography:   { label:'Geography',   color:'#2980b9', light:'#d6eaf8', icon:'compass' },
+  mathematics: { label:'Maths',       color:'#e67e22', light:'#fdebd0', icon:'math' },
+  biology:     { label:'Biology',     color:'#27ae60', light:'#d5f5e3', icon:'leaf' },
+  general:     { label:'General',     color:'#8e44ad', light:'#e8daef', icon:'star' },
+  funfacts:    { label:'Fun Facts',   color:'#d4ac0d', light:'#fef9e7', icon:'lightning' },
+  squid:       { label:'Squid!',      color:'#1a252f', light:'#85929e', icon:'squid' },
+  memory:      { label:'Memory',      color:'#c0392b', light:'#fadbd8', icon:'card' },
+  start:       { label:'Start',       color:'#27ae60', light:'#d5f5e3', icon:'flag' },
+  finish:      { label:'Finish!',     color:'#f1c40f', light:'#fef9e7', icon:'trophy' },
+};
+
+// ── QUESTION DATABASE ─────────────────────────────────────────────────────────
+// 10 questions per category per level (5 cats × 3 levels = 150 questions)
+
+const QUESTION_DB = [
+
+// ════════════════════════════════════════
+// GEOGRAPHY — Level 1
+// ════════════════════════════════════════
+{id:'g1l1a',cat:'geography',level:1,q:"What is the capital city of France?",opts:["London","Berlin","Paris","Rome"],a:2,fact:"Paris has been France's capital for over 1,000 years and is famous for the Eiffel Tower."},
+{id:'g1l1b',cat:'geography',level:1,q:"Which is the largest ocean on Earth?",opts:["Atlantic","Indian","Arctic","Pacific"],a:3,fact:"The Pacific Ocean covers about one-third of Earth's entire surface."},
+{id:'g1l1c',cat:'geography',level:1,q:"On which continent is Brazil located?",opts:["Africa","Asia","South America","Europe"],a:2,fact:"Brazil is the largest country in South America and the fifth largest in the world."},
+{id:'g1l1d',cat:'geography',level:1,q:"What is the capital of Australia?",opts:["Sydney","Melbourne","Canberra","Brisbane"],a:2,fact:"Canberra was built as a compromise between Sydney and Melbourne, both of which wanted to be capital."},
+{id:'g1l1e',cat:'geography',level:1,q:"Which country has a red maple leaf on its flag?",opts:["USA","Canada","Japan","Switzerland"],a:1,fact:"The maple leaf has been a Canadian symbol since the 18th century."},
+{id:'g1l1f',cat:'geography',level:1,q:"What is the longest river in the world?",opts:["Amazon","Mississippi","Yangtze","Nile"],a:3,fact:"The Nile flows about 6,650 km through north-eastern Africa to the Mediterranean Sea."},
+{id:'g1l1g',cat:'geography',level:1,q:"Which country is known as the Land of the Rising Sun?",opts:["China","Japan","South Korea","Thailand"],a:1,fact:"Japan's name in Japanese is 'Nihon' which means 'origin of the sun'."},
+{id:'g1l1h',cat:'geography',level:1,q:"How many continents are there on Earth?",opts:["5","6","7","8"],a:2,fact:"The seven continents are Africa, Antarctica, Asia, Australia, Europe, North America, and South America."},
+{id:'g1l1i',cat:'geography',level:1,q:"Which country has the Great Wall?",opts:["India","Japan","China","South Korea"],a:2,fact:"The Great Wall of China stretches over 21,000 km and took over 1,000 years to build."},
+{id:'g1l1j',cat:'geography',level:1,q:"What is the capital of Egypt?",opts:["Luxor","Alexandria","Aswan","Cairo"],a:3,fact:"Cairo is Africa's largest city, home to over 20 million people."},
+
+// ════════════════════════════════════════
+// GEOGRAPHY — Level 2
+// ════════════════════════════════════════
+{id:'g1l2a',cat:'geography',level:2,q:"Which mountain is the tallest on Earth?",opts:["K2","Mount Kilimanjaro","Mount Everest","Mont Blanc"],a:2,fact:"Mount Everest stands 8,848 metres above sea level on the border of Nepal and Tibet."},
+{id:'g1l2b',cat:'geography',level:2,q:"Which African country has the most pyramids?",opts:["Egypt","Ethiopia","Sudan","Libya"],a:2,fact:"Sudan has over 200 pyramids — more than Egypt! They were built by the ancient Nubian civilisations."},
+{id:'g1l2c',cat:'geography',level:2,q:"The Amazon River flows into which ocean?",opts:["Pacific","Indian","Southern","Atlantic"],a:3,fact:"The Amazon carries 20% of all freshwater flowing into the world's oceans."},
+{id:'g1l2d',cat:'geography',level:2,q:"Which is the smallest country in the world?",opts:["Monaco","San Marino","Liechtenstein","Vatican City"],a:3,fact:"Vatican City covers just 0.44 square kilometres inside Rome, Italy."},
+{id:'g1l2e',cat:'geography',level:2,q:"On which continent is the Sahara Desert located?",opts:["Asia","South America","Australia","Africa"],a:3,fact:"The Sahara is the world's largest hot desert, nearly the size of the United States."},
+{id:'g1l2f',cat:'geography',level:2,q:"Which sea separates Europe from Africa?",opts:["Red Sea","Baltic Sea","Mediterranean Sea","Caspian Sea"],a:2,fact:"The Mediterranean Sea touches 21 countries across three continents."},
+{id:'g1l2g',cat:'geography',level:2,q:"What is the capital of Brazil?",opts:["Rio de Janeiro","São Paulo","Salvador","Brasília"],a:3,fact:"Brasília was built from scratch in 4 years and became Brazil's capital in 1960."},
+{id:'g1l2h',cat:'geography',level:2,q:"The Great Barrier Reef is located near which country?",opts:["New Zealand","Japan","Australia","Indonesia"],a:2,fact:"The Great Barrier Reef is the world's largest coral reef system, visible from space."},
+{id:'g1l2i',cat:'geography',level:2,q:"Which country owns the Galapagos Islands?",opts:["Peru","Chile","Colombia","Ecuador"],a:3,fact:"Charles Darwin visited the Galapagos in 1835, inspiring his theory of natural selection."},
+{id:'g1l2j',cat:'geography',level:2,q:"Lake Baikal in Russia is the world's deepest lake. How deep is it?",opts:["500 m","1,000 m","1,642 m","2,000 m"],a:2,fact:"Lake Baikal contains about 20% of the world's unfrozen surface fresh water."},
+
+// ════════════════════════════════════════
+// GEOGRAPHY — Level 3
+// ════════════════════════════════════════
+{id:'g1l3a',cat:'geography',level:3,q:"Which strait separates Europe from Africa?",opts:["Strait of Hormuz","Strait of Gibraltar","Bering Strait","Strait of Malacca"],a:1,fact:"The Strait of Gibraltar is only 14 km wide at its narrowest point."},
+{id:'g1l3b',cat:'geography',level:3,q:"What is the name of the tectonic plate that most of the Pacific Ocean sits on?",opts:["Eurasian Plate","African Plate","Pacific Plate","Indo-Australian Plate"],a:2,fact:"The Pacific Plate is the largest tectonic plate on Earth and is slowly moving northwest."},
+{id:'g1l3c',cat:'geography',level:3,q:"Which country has the most time zones?",opts:["China","Russia","USA","France"],a:3,fact:"France has 12 time zones because of its overseas territories, more than any other country."},
+{id:'g1l3d',cat:'geography',level:3,q:"The Atacama Desert in Chile is famous for being what?",opts:["Hottest","Largest","Driest","Windiest"],a:2,fact:"Parts of the Atacama have never recorded rainfall. NASA tests Mars rovers there!"},
+{id:'g1l3e',cat:'geography',level:3,q:"What percentage of Earth's fresh water is stored in Antarctica's ice?",opts:["20%","40%","60%","80%"],a:2,fact:"If Antarctica's ice melted, sea levels would rise by about 60 metres worldwide."},
+{id:'g1l3f',cat:'geography',level:3,q:"Which country has the longest coastline in the world?",opts:["Norway","Russia","USA","Canada"],a:3,fact:"Canada's coastline measures 202,080 km — more than 5 times around the Earth!"},
+{id:'g1l3g',cat:'geography',level:3,q:"What is the name of the deepest trench in the world's oceans?",opts:["Puerto Rico Trench","Java Trench","Mariana Trench","Tonga Trench"],a:2,fact:"The Mariana Trench reaches 11,034 metres — deeper than Mount Everest is tall."},
+{id:'g1l3h',cat:'geography',level:3,q:"Which river delta is the largest in the world?",opts:["Nile Delta","Amazon Delta","Ganges-Brahmaputra Delta","Yangtze Delta"],a:2,fact:"The Ganges-Brahmaputra Delta covers 100,000 sq km in Bangladesh and India."},
+{id:'g1l3i',cat:'geography',level:3,q:"The Ring of Fire is an area with many volcanoes around which ocean?",opts:["Atlantic","Indian","Arctic","Pacific"],a:3,fact:"The Ring of Fire has 452 volcanoes and is responsible for 90% of the world's earthquakes."},
+{id:'g1l3j',cat:'geography',level:3,q:"What is the world's largest landlocked country?",opts:["Mongolia","Kazakhstan","Bolivia","Chad"],a:1,fact:"Kazakhstan is the 9th largest country in the world and is bigger than Western Europe."},
+
+// ════════════════════════════════════════
+// MATHEMATICS — Level 1
+// ════════════════════════════════════════
+{id:'m1l1a',cat:'mathematics',level:1,q:"What is 7 × 8?",opts:["54","56","63","48"],a:1,fact:"Multiplication is just repeated addition — 7×8 means adding 7 eight times!"},
+{id:'m1l1b',cat:'mathematics',level:1,q:"What is half of 64?",opts:["28","36","32","34"],a:2,fact:"Halving is the same as dividing by 2. Half of 64 = 64 ÷ 2 = 32."},
+{id:'m1l1c',cat:'mathematics',level:1,q:"How many sides does a hexagon have?",opts:["5","7","8","6"],a:3,fact:"Honeycombs are hexagonal because it's the most efficient shape for storing honey!"},
+{id:'m1l1d',cat:'mathematics',level:1,q:"What is 100 − 37?",opts:["63","67","73","57"],a:0,fact:"One trick: 100 − 37 = 100 − 40 + 3 = 60 + 3 = 63."},
+{id:'m1l1e',cat:'mathematics',level:1,q:"What is 9 × 9?",opts:["72","82","81","91"],a:2,fact:"There's a fun pattern in the 9 times table — the digits always add up to 9!"},
+{id:'m1l1f',cat:'mathematics',level:1,q:"If you have 24 apples and share them equally among 4 friends, how many does each get?",opts:["5","6","8","4"],a:1,fact:"Division is just splitting into equal groups. 24 ÷ 4 = 6."},
+{id:'m1l1g',cat:'mathematics',level:1,q:"What is the next number in the sequence: 2, 4, 6, 8, …?",opts:["9","10","12","11"],a:1,fact:"These are the even numbers! They always increase by 2."},
+{id:'m1l1h',cat:'mathematics',level:1,q:"How many minutes are in 2 hours?",opts:["100","120","140","90"],a:1,fact:"1 hour = 60 minutes, so 2 hours = 120 minutes."},
+{id:'m1l1i',cat:'mathematics',level:1,q:"What shape has 3 sides?",opts:["Square","Pentagon","Triangle","Rectangle"],a:2,fact:"The word 'triangle' comes from Latin 'triangulum' meaning three angles."},
+{id:'m1l1j',cat:'mathematics',level:1,q:"What is 25 + 75?",opts:["90","95","105","100"],a:3,fact:"25 and 75 are complementary — they always add up to 100!"},
+
+// ════════════════════════════════════════
+// MATHEMATICS — Level 2
+// ════════════════════════════════════════
+{id:'m1l2a',cat:'mathematics',level:2,q:"What is 15% of 200?",opts:["25","30","35","40"],a:1,fact:"To find 15%, find 10% (=20) then add half of that (10), so 20+10=30."},
+{id:'m1l2b',cat:'mathematics',level:2,q:"What is the area of a rectangle 8 cm long and 5 cm wide?",opts:["26 cm²","40 cm²","30 cm²","45 cm²"],a:1,fact:"Area of a rectangle = length × width. 8 × 5 = 40 cm²."},
+{id:'m1l2c',cat:'mathematics',level:2,q:"What is the square root of 144?",opts:["11","13","12","14"],a:2,fact:"12 × 12 = 144. The square root of a number is what you multiply by itself to get it."},
+{id:'m1l2d',cat:'mathematics',level:2,q:"A train travels at 60 km/h. How far does it go in 2.5 hours?",opts:["120 km","150 km","180 km","200 km"],a:1,fact:"Distance = speed × time. 60 × 2.5 = 150 km."},
+{id:'m1l2e',cat:'mathematics',level:2,q:"What is 3/4 expressed as a decimal?",opts:["0.34","0.7","0.75","0.8"],a:2,fact:"3 divided by 4 = 0.75. You can also think of it as 75 cents in a dollar."},
+{id:'m1l2f',cat:'mathematics',level:2,q:"How many degrees are in a right angle?",opts:["45°","60°","90°","180°"],a:2,fact:"A right angle looks like the corner of a square and is exactly 90 degrees."},
+{id:'m1l2g',cat:'mathematics',level:2,q:"What is 2⁵ (2 to the power of 5)?",opts:["10","16","32","64"],a:2,fact:"2⁵ = 2×2×2×2×2 = 32. Powers of 2 are important in computers!"},
+{id:'m1l2h',cat:'mathematics',level:2,q:"If a pizza has 8 slices and you eat 3, what fraction is left?",opts:["3/8","1/2","5/8","2/3"],a:2,fact:"8 total − 3 eaten = 5 remaining, so 5/8 of the pizza is left."},
+{id:'m1l2i',cat:'mathematics',level:2,q:"What is the perimeter of a square with sides of 7 cm?",opts:["14 cm","21 cm","28 cm","49 cm"],a:2,fact:"Perimeter = all sides added. For a square: 4 × 7 = 28 cm."},
+{id:'m1l2j',cat:'mathematics',level:2,q:"Round 3.847 to 2 decimal places.",opts:["3.84","3.85","3.8","3.9"],a:1,fact:"Look at the third decimal (7). Since it's 5 or more, round up: 3.85."},
+
+// ════════════════════════════════════════
+// MATHEMATICS — Level 3
+// ════════════════════════════════════════
+{id:'m1l3a',cat:'mathematics',level:3,q:"What is the value of π (pi) to 2 decimal places?",opts:["3.12","3.14","3.16","3.41"],a:1,fact:"Pi is an irrational number — its decimal goes on forever without repeating!"},
+{id:'m1l3b',cat:'mathematics',level:3,q:"If a car uses 8 litres per 100 km, how many litres for a 350 km journey?",opts:["24 L","28 L","32 L","36 L"],a:1,fact:"8 litres per 100 km × 3.5 = 28 litres. This is called fuel efficiency!"},
+{id:'m1l3c',cat:'mathematics',level:3,q:"What is the formula for the area of a circle?",opts:["2πr","πr²","πd","2πr²"],a:1,fact:"A = πr² where r is the radius. Pi (π) ≈ 3.14159."},
+{id:'m1l3d',cat:'mathematics',level:3,q:"Solve: 5x − 3 = 17. What is x?",opts:["3","4","5","6"],a:1,fact:"Add 3 to both sides: 5x = 20, then divide by 5: x = 4."},
+{id:'m1l3e',cat:'mathematics',level:3,q:"What is the sum of interior angles of a pentagon?",opts:["360°","450°","540°","720°"],a:2,fact:"Formula: (n-2) × 180°. For pentagon (5 sides): (5-2) × 180 = 540°."},
+{id:'m1l3f',cat:'mathematics',level:3,q:"A bag has 3 red and 7 blue balls. What is the probability of picking red?",opts:["3/7","3/10","7/10","1/3"],a:1,fact:"Probability = favourable outcomes ÷ total outcomes = 3 ÷ (3+7) = 3/10."},
+{id:'m1l3g',cat:'mathematics',level:3,q:"What is the Fibonacci sequence's 8th number? (1,1,2,3,5,8,13,…)",opts:["18","19","20","21"],a:3,fact:"Each Fibonacci number is the sum of the two before it. This pattern appears throughout nature!"},
+{id:'m1l3h',cat:'mathematics',level:3,q:"Convert 0.625 to a fraction in its simplest form.",opts:["5/8","6/10","62/100","3/5"],a:0,fact:"0.625 = 625/1000 = 5/8. The greatest common factor of 625 and 1000 is 125."},
+{id:'m1l3i',cat:'mathematics',level:3,q:"A cube has sides of 4 cm. What is its volume?",opts:["16 cm³","32 cm³","48 cm³","64 cm³"],a:3,fact:"Volume of a cube = side³. 4 × 4 × 4 = 64 cm³."},
+{id:'m1l3j',cat:'mathematics',level:3,q:"What is the highest common factor (HCF) of 36 and 48?",opts:["6","9","12","18"],a:2,fact:"Factors of 36: 1,2,3,4,6,9,12,18,36. Factors of 48: 1,2,3,4,6,8,12,16,24,48. Highest common = 12."},
+
+// ════════════════════════════════════════
+// BIOLOGY — Level 1
+// ════════════════════════════════════════
+{id:'b1l1a',cat:'biology',level:1,q:"What do plants need along with water and sunlight to make their own food?",opts:["Soil","Carbon dioxide","Oxygen","Nitrogen"],a:1,fact:"Plants make food through photosynthesis using sunlight, water, and CO₂ — releasing oxygen as a bonus!"},
+{id:'b1l1b',cat:'biology',level:1,q:"How many legs does an insect have?",opts:["4","6","8","10"],a:1,fact:"All insects have 6 legs, 3 body parts, and most have wings. Spiders have 8 legs and are not insects."},
+{id:'b1l1c',cat:'biology',level:1,q:"What is the largest animal on Earth?",opts:["Elephant","Great White Shark","Blue Whale","Giraffe"],a:2,fact:"The blue whale can grow up to 30 metres long and weigh as much as 200 tonnes!"},
+{id:'b1l1d',cat:'biology',level:1,q:"What do herbivores eat?",opts:["Only meat","Only plants","Both plants and meat","Only fish"],a:1,fact:"Herbivores like cows, horses, and rabbits only eat plants. 'Herba' means grass in Latin."},
+{id:'b1l1e',cat:'biology',level:1,q:"Which organ pumps blood around your body?",opts:["Lungs","Brain","Stomach","Heart"],a:3,fact:"Your heart beats about 100,000 times every day — that's about 35 million times a year!"},
+{id:'b1l1f',cat:'biology',level:1,q:"What is the name of the process by which caterpillars become butterflies?",opts:["Migration","Metamorphosis","Pollination","Hibernation"],a:1,fact:"During metamorphosis, the caterpillar transforms completely inside its chrysalis over about 2 weeks."},
+{id:'b1l1g',cat:'biology',level:1,q:"What are the tiny holes in leaves called that let gases in and out?",opts:["Stomata","Chloroplasts","Roots","Petals"],a:0,fact:"Stomata are like tiny mouths in leaves — they open and close to control gas exchange."},
+{id:'b1l1h',cat:'biology',level:1,q:"What is the hard outer covering of insects and crabs called?",opts:["Scales","Fur","Exoskeleton","Shell"],a:2,fact:"An exoskeleton is an external skeleton that supports and protects the body — like armour!"},
+{id:'b1l1i',cat:'biology',level:1,q:"How many chambers does a human heart have?",opts:["2","3","4","5"],a:2,fact:"The heart has 4 chambers: right and left atria (upper) and right and left ventricles (lower)."},
+{id:'b1l1j',cat:'biology',level:1,q:"What is the green pigment in plants that captures sunlight?",opts:["Melanin","Haemoglobin","Chlorophyll","Carotene"],a:2,fact:"Chlorophyll makes plants green. In autumn it breaks down, revealing yellow and orange pigments!"},
+
+// ════════════════════════════════════════
+// BIOLOGY — Level 2
+// ════════════════════════════════════════
+{id:'b1l2a',cat:'biology',level:2,q:"What is the basic unit of life?",opts:["Organ","Tissue","Cell","Atom"],a:2,fact:"All living things are made of cells. A human body has about 37 trillion cells!"},
+{id:'b1l2b',cat:'biology',level:2,q:"Which part of the cell contains DNA?",opts:["Cell membrane","Cytoplasm","Mitochondria","Nucleus"],a:3,fact:"The nucleus is the cell's control centre, housing DNA that carries genetic instructions."},
+{id:'b1l2c',cat:'biology',level:2,q:"What is the function of red blood cells?",opts:["Fight infection","Carry oxygen","Produce hormones","Digest food"],a:1,fact:"Red blood cells contain haemoglobin, which binds to oxygen in the lungs and delivers it to the body."},
+{id:'b1l2d',cat:'biology',level:2,q:"What are animals that eat both plants and animals called?",opts:["Herbivores","Carnivores","Omnivores","Decomposers"],a:2,fact:"Humans, bears, and pigs are omnivores. 'Omni' means 'all' in Latin."},
+{id:'b1l2e',cat:'biology',level:2,q:"Which gas do plants release during photosynthesis?",opts:["Carbon dioxide","Nitrogen","Hydrogen","Oxygen"],a:3,fact:"Plants are essential for life on Earth because they produce the oxygen we breathe."},
+{id:'b1l2f',cat:'biology',level:2,q:"What is the longest bone in the human body?",opts:["Humerus","Tibia","Spine","Femur"],a:3,fact:"The femur (thigh bone) can be up to 50 cm long in adults and is incredibly strong."},
+{id:'b1l2g',cat:'biology',level:2,q:"What type of animal is a dolphin?",opts:["Fish","Amphibian","Reptile","Mammal"],a:3,fact:"Dolphins are mammals — they breathe air, give birth to live young, and nurse them with milk."},
+{id:'b1l2h',cat:'biology',level:2,q:"How many bones are in an adult human body?",opts:["156","196","206","256"],a:2,fact:"Babies are born with about 270 bones — they fuse together as we grow to form 206."},
+{id:'b1l2i',cat:'biology',level:2,q:"What is the powerhouse of the cell?",opts:["Nucleus","Ribosome","Mitochondria","Vacuole"],a:2,fact:"Mitochondria produce ATP — the energy currency that powers almost everything in your body."},
+{id:'b1l2j',cat:'biology',level:2,q:"Which animal has the longest gestation period?",opts:["Elephant","Blue whale","Rhinoceros","Camel"],a:0,fact:"Elephants are pregnant for about 22 months — almost 2 years — the longest of any land animal."},
+
+// ════════════════════════════════════════
+// BIOLOGY — Level 3
+// ════════════════════════════════════════
+{id:'b1l3a',cat:'biology',level:3,q:"What is the process by which bacteria and fungi break down dead organisms?",opts:["Photosynthesis","Decomposition","Fermentation","Respiration"],a:1,fact:"Decomposers are nature's recyclers — they return nutrients to the soil for plants to use."},
+{id:'b1l3b',cat:'biology',level:3,q:"What is the scientific name for the sugar produced by photosynthesis?",opts:["Fructose","Glucose","Sucrose","Lactose"],a:1,fact:"Glucose (C₆H₁₂O₆) is the primary fuel for most living cells."},
+{id:'b1l3c',cat:'biology',level:3,q:"How many pairs of chromosomes do humans have?",opts:["20","23","24","46"],a:1,fact:"Humans have 23 pairs of chromosomes (46 total) — one set from each parent."},
+{id:'b1l3d',cat:'biology',level:3,q:"What is the name of the organ that filters waste from blood in humans?",opts:["Liver","Spleen","Pancreas","Kidneys"],a:3,fact:"Your kidneys filter about 180 litres of blood every day and produce about 1.5 litres of urine."},
+{id:'b1l3e',cat:'biology',level:3,q:"What is the scientific term for animals that maintain a constant body temperature?",opts:["Ectotherms","Endotherms","Poikilotherms","Heterotrophs"],a:1,fact:"Endotherms (like birds and mammals) generate their own heat. Ectotherms rely on the environment."},
+{id:'b1l3f',cat:'biology',level:3,q:"What protein do fingernails and hair consist mostly of?",opts:["Collagen","Elastin","Keratin","Actin"],a:2,fact:"Keratin also makes up animal horns, hooves, and bird feathers — it's a very versatile protein!"},
+{id:'b1l3g',cat:'biology',level:3,q:"What type of symbiotic relationship do clownfish and sea anemones have?",opts:["Parasitism","Commensalism","Competition","Mutualism"],a:3,fact:"Clownfish get shelter; anemones get cleaning and more food. Both benefit — that's mutualism!"},
+{id:'b1l3h',cat:'biology',level:3,q:"What is the name of the process by which organisms change over many generations to suit their environment?",opts:["Migration","Adaptation","Evolution","Speciation"],a:2,fact:"Charles Darwin developed the theory of evolution by natural selection in the 1850s."},
+{id:'b1l3i',cat:'biology',level:3,q:"Which molecule carries genetic information from the nucleus to ribosomes?",opts:["DNA","mRNA","tRNA","rRNA"],a:1,fact:"Messenger RNA (mRNA) carries the 'recipe' from DNA to ribosomes where proteins are made."},
+{id:'b1l3j',cat:'biology',level:3,q:"How many litres of blood does an average adult human body contain?",opts:["3–4 litres","5–6 litres","7–8 litres","9–10 litres"],a:1,fact:"An adult body has 5–6 litres of blood, which completes a full circuit in about 1 minute."},
+
+// ════════════════════════════════════════
+// GENERAL KNOWLEDGE — Level 1
+// ════════════════════════════════════════
+{id:'k1l1a',cat:'general',level:1,q:"What colour do you get when you mix red and blue?",opts:["Orange","Green","Purple","Brown"],a:2,fact:"Purple (or violet) sits between red and blue on the colour spectrum."},
+{id:'k1l1b',cat:'general',level:1,q:"How many days are in a leap year?",opts:["365","366","367","364"],a:1,fact:"We add a leap day (Feb 29) every 4 years to keep our calendar aligned with Earth's orbit."},
+{id:'k1l1c',cat:'general',level:1,q:"What is the name of the fairy tale character who slept for 100 years?",opts:["Cinderella","Snow White","Rapunzel","Sleeping Beauty"],a:3,fact:"Sleeping Beauty is based on a 17th-century tale by Charles Perrault."},
+{id:'k1l1d',cat:'general',level:1,q:"What instrument has black and white keys?",opts:["Guitar","Trumpet","Violin","Piano"],a:3,fact:"A standard piano has 88 keys — 52 white and 36 black."},
+{id:'k1l1e',cat:'general',level:1,q:"Which planet is closest to the Sun?",opts:["Venus","Earth","Mars","Mercury"],a:3,fact:"Mercury orbits the Sun every 88 days — a year on Mercury is less than 3 months on Earth!"},
+{id:'k1l1f',cat:'general',level:1,q:"What sport is played at Wimbledon?",opts:["Cricket","Football","Tennis","Golf"],a:2,fact:"Wimbledon is the oldest tennis tournament in the world, first held in 1877."},
+{id:'k1l1g',cat:'general',level:1,q:"What is the name of the famous toy building blocks made from plastic bricks?",opts:["Meccano","Duplo","Lego","K'Nex"],a:2,fact:"Lego was invented in Denmark in 1949. The word comes from the Danish 'leg godt' meaning 'play well'."},
+{id:'k1l1h',cat:'general',level:1,q:"How many letters are in the English alphabet?",opts:["24","25","26","27"],a:2,fact:"The English alphabet has 26 letters. Some other languages have more — Hawaiian has only 13!"},
+{id:'k1l1i',cat:'general',level:1,q:"What do you call a baby dog?",opts:["Kitten","Cub","Puppy","Foal"],a:2,fact:"Puppies are born with their eyes closed. They open them at about 2 weeks old."},
+{id:'k1l1j',cat:'general',level:1,q:"Which planet is known as the Red Planet?",opts:["Jupiter","Saturn","Venus","Mars"],a:3,fact:"Mars looks red because its surface is covered with iron oxide — basically rust!"},
+
+// ════════════════════════════════════════
+// GENERAL KNOWLEDGE — Level 2
+// ════════════════════════════════════════
+{id:'k1l2a',cat:'general',level:2,q:"Who wrote Romeo and Juliet?",opts:["Charles Dickens","William Shakespeare","Jane Austen","J.K. Rowling"],a:1,fact:"Shakespeare wrote Romeo and Juliet around 1594–1596. He wrote 37 plays in total!"},
+{id:'k1l2b',cat:'general',level:2,q:"What is the chemical symbol for gold?",opts:["Go","Gd","Gl","Au"],a:3,fact:"Au comes from 'aurum', the Latin word for gold. It's been prized for thousands of years."},
+{id:'k1l2c',cat:'general',level:2,q:"In which city are the headquarters of the United Nations?",opts:["Geneva","Paris","London","New York"],a:3,fact:"The UN was founded in 1945 after World War II. It now has 193 member countries."},
+{id:'k1l2d',cat:'general',level:2,q:"Which ancient wonder of the world still exists today?",opts:["Hanging Gardens","Colossus of Rhodes","Great Pyramid of Giza","Temple of Artemis"],a:2,fact:"The Great Pyramid of Giza was built around 2560 BC and is the oldest of the Seven Wonders."},
+{id:'k1l2e',cat:'general',level:2,q:"What is the speed of light in a vacuum (approximately)?",opts:["300,000 km/s","150,000 km/s","3,000 km/s","30,000 km/s"],a:0,fact:"Light travels so fast it could circle Earth about 7.5 times in just one second!"},
+{id:'k1l2f',cat:'general',level:2,q:"Who painted the Mona Lisa?",opts:["Michelangelo","Raphael","Leonardo da Vinci","Botticelli"],a:2,fact:"Leonardo da Vinci painted the Mona Lisa between 1503–1519. It's now in the Louvre in Paris."},
+{id:'k1l2g',cat:'general',level:2,q:"What is the hardest natural substance on Earth?",opts:["Granite","Ruby","Diamond","Quartz"],a:2,fact:"Diamond is a 10 on the Mohs hardness scale. It's made of pure carbon arranged in a special crystal structure."},
+{id:'k1l2h',cat:'general',level:2,q:"What language is spoken in Brazil?",opts:["Spanish","French","English","Portuguese"],a:3,fact:"Portuguese is spoken in Brazil because it was colonised by Portugal starting in 1500."},
+{id:'k1l2i',cat:'general',level:2,q:"How many strings does a standard guitar have?",opts:["4","5","6","7"],a:2,fact:"Standard guitars have 6 strings. Bass guitars usually have 4, and some guitars have 7 or 12!"},
+{id:'k1l2j',cat:'general',level:2,q:"What is the name of the first artificial satellite launched into space?",opts:["Apollo","Vostok","Sputnik","Explorer"],a:2,fact:"Sputnik 1 was launched by the Soviet Union on 4 October 1957, starting the Space Age."},
+
+// ════════════════════════════════════════
+// GENERAL KNOWLEDGE — Level 3
+// ════════════════════════════════════════
+{id:'k1l3a',cat:'general',level:3,q:"What is the Rosetta Stone?",opts:["A famous gem","A musical instrument","An ancient decree in 3 scripts","A Roman road map"],a:2,fact:"Found in 1799, the Rosetta Stone helped scholars finally decode Egyptian hieroglyphics."},
+{id:'k1l3b',cat:'general',level:3,q:"What is the name of the economic theory that free markets regulate themselves without government intervention?",opts:["Marxism","Keynesianism","Laissez-faire","Mercantilism"],a:2,fact:"'Laissez-faire' means 'let do' in French. Adam Smith described these ideas in The Wealth of Nations (1776)."},
+{id:'k1l3c',cat:'general',level:3,q:"What is the Turing Test designed to measure?",opts:["Computer speed","A machine's ability to mimic human intelligence","Internet security","Memory capacity"],a:1,fact:"Alan Turing proposed the test in 1950. A machine passes if a human can't tell they're not talking to a person."},
+{id:'k1l3d',cat:'general',level:3,q:"In what year did the Berlin Wall fall?",opts:["1985","1987","1989","1991"],a:2,fact:"The Berlin Wall fell on 9 November 1989, reuniting East and West Germany after 28 years."},
+{id:'k1l3e',cat:'general',level:3,q:"What does UNESCO stand for?",opts:["United Nations Education, Science and Culture Organisation","Universal Nations Economic and Social Council","United Nations Environment Sustainability Committee","Universal Education, Science and Cultural Organisation"],a:0,fact:"UNESCO works to build peace through international cooperation in education, science, and culture."},
+{id:'k1l3f',cat:'general',level:3,q:"What is the name of the magnetic field that protects Earth from solar wind?",opts:["Ionosphere","Magnetosphere","Van Allen Belt","Thermosphere"],a:1,fact:"Earth's magnetosphere deflects harmful charged particles from the Sun, making life possible."},
+{id:'k1l3g',cat:'general',level:3,q:"Who developed the theory of general relativity?",opts:["Isaac Newton","Niels Bohr","Albert Einstein","Max Planck"],a:2,fact:"Einstein published his general theory of relativity in 1915, revolutionising our understanding of gravity."},
+{id:'k1l3h',cat:'general',level:3,q:"The Silk Road was an ancient trade route connecting China to which other region?",opts:["Africa","Australia","The Americas","Europe and the Middle East"],a:3,fact:"The Silk Road stretched over 6,400 km and connected civilisations for over 1,500 years."},
+{id:'k1l3i',cat:'general',level:3,q:"What is the name of the award given to the best film at the Academy Awards?",opts:["Palme d'Or","BAFTA","Golden Globe","Oscar for Best Picture"],a:3,fact:"The Academy Awards have been held since 1929. The Oscar statuette weighs 3.8 kg."},
+{id:'k1l3j',cat:'general',level:3,q:"What is the approximate age of the universe?",opts:["4.5 billion years","13.8 billion years","100 billion years","4 trillion years"],a:1,fact:"Scientists calculated the age of the universe from the cosmic microwave background radiation."},
+
+// ════════════════════════════════════════
+// FUN FACTS — Level 1
+// ════════════════════════════════════════
+{id:'f1l1a',cat:'funfacts',level:1,q:"How many hearts does an octopus have?",opts:["1","2","3","4"],a:2,fact:"Octopuses have 3 hearts — 2 pump blood to the gills, and 1 pumps it to the rest of the body. Their blood is blue!"},
+{id:'f1l1b',cat:'funfacts',level:1,q:"What is the only fruit with seeds on the outside?",opts:["Raspberry","Strawberry","Blueberry","Kiwi"],a:1,fact:"What we call strawberry 'seeds' are actually tiny fruits called achenes. The real seeds are inside those!"},
+{id:'f1l1c',cat:'funfacts',level:1,q:"How long can a snail sleep for?",opts:["1 week","1 month","3 years","1 year"],a:2,fact:"Snails can hibernate for up to 3 years during drought. They seal their shells with a layer of mucus!"},
+{id:'f1l1d',cat:'funfacts',level:1,q:"What animal never sleeps?",opts:["Dolphin","Shark","Jellyfish","Snake"],a:1,fact:"Sharks must keep swimming to breathe. Some rest parts of their brain while keeping the other half alert."},
+{id:'f1l1e',cat:'funfacts',level:1,q:"A group of flamingos is called a what?",opts:["Pod","Flamboyance","Flock","Colony"],a:1,fact:"Flamingos get their pink colour from the food they eat — shrimp and algae containing pink pigments!"},
+{id:'f1l1f',cat:'funfacts',level:1,q:"What is the fastest land animal?",opts:["Lion","Horse","Cheetah","Gazelle"],a:2,fact:"Cheetahs can reach 120 km/h in short bursts and can accelerate from 0 to 100 km/h in just 3 seconds!"},
+{id:'f1l1g',cat:'funfacts',level:1,q:"Bananas are technically which type of plant product?",opts:["Nut","Vegetable","Berry","Flower"],a:2,fact:"Botanically, bananas are berries! Strawberries are NOT berries by botanical definition. Science is wild!"},
+{id:'f1l1h',cat:'funfacts',level:1,q:"How many eyes does a spider have?",opts:["2","4","6","8"],a:3,fact:"Most spiders have 8 eyes, but some cave spiders have none. Spider silk is stronger than steel wire!"},
+{id:'f1l1i',cat:'funfacts',level:1,q:"Which bird can fly backwards?",opts:["Penguin","Eagle","Hummingbird","Parrot"],a:2,fact:"Hummingbirds flap their wings up to 80 times per second and are the only birds that can fly backwards!"},
+{id:'f1l1j',cat:'funfacts',level:1,q:"What is the name of the toy story cowboy character?",opts:["Buzz","Woody","Rex","Hamm"],a:1,fact:"Woody Pride is the main character of Toy Story (1995), Pixar's first feature-length film."},
+
+// ════════════════════════════════════════
+// FUN FACTS — Level 2
+// ════════════════════════════════════════
+{id:'f1l2a',cat:'funfacts',level:2,q:"How many muscles does it take to smile?",opts:["6","12","17","43"],a:2,fact:"It takes 17 muscles to smile and about 43 to frown — so smiling is actually easier!"},
+{id:'f1l2b',cat:'funfacts',level:2,q:"What is the only planet that rotates on its side?",opts:["Saturn","Neptune","Uranus","Venus"],a:2,fact:"Uranus has an axial tilt of 98°, so it basically rolls around the Sun like a bowling ball!"},
+{id:'f1l2c',cat:'funfacts',level:2,q:"Which country invented pizza?",opts:["USA","Greece","Italy","Spain"],a:2,fact:"Modern pizza was invented in Naples, Italy in the 1800s. The Margherita was created for Queen Margherita in 1889."},
+{id:'f1l2d',cat:'funfacts',level:2,q:"What colour is the blood of an octopus?",opts:["Red","Green","Blue","Purple"],a:2,fact:"Octopus blood is blue because it contains copper-based haemocyanin instead of iron-based haemoglobin."},
+{id:'f1l2e',cat:'funfacts',level:2,q:"How many times can a piece of paper be folded in half?",opts:["4–5 times","6–7 times","8–9 times","10+ times"],a:1,fact:"You can typically fold paper about 7 times. A piece folded 42 times would reach the Moon!"},
+{id:'f1l2f',cat:'funfacts',level:2,q:"Which animal has fingerprints almost identical to humans?",opts:["Gorilla","Koala","Chimpanzee","Orangutan"],a:1,fact:"Koala fingerprints are so similar to humans that they have even confused crime scene investigators!"},
+{id:'f1l2g',cat:'funfacts',level:2,q:"What material was the first Lego brick made from?",opts:["Metal","Wood","Rubber","Plastic"],a:1,fact:"The original Lego bricks from 1949 were made of wood, but switched to plastic in the 1950s."},
+{id:'f1l2h',cat:'funfacts',level:2,q:"How long does it take light from the Sun to reach Earth?",opts:["3 minutes","8 minutes","15 minutes","30 minutes"],a:1,fact:"Light takes about 8 minutes and 20 seconds to travel the 150 million km from the Sun to Earth."},
+{id:'f1l2i',cat:'funfacts',level:2,q:"What is a baby kangaroo called?",opts:["Cub","Joey","Pup","Kit"],a:1,fact:"A baby kangaroo (joey) is the size of a jellybean when born and lives in its mother's pouch for 9 months!"},
+{id:'f1l2j',cat:'funfacts',level:2,q:"What is the world's most widely spoken language by number of native speakers?",opts:["English","Spanish","Hindi","Mandarin Chinese"],a:3,fact:"Mandarin Chinese has about 920 million native speakers, nearly double the next largest group."},
+
+// ════════════════════════════════════════
+// FUN FACTS — Level 3
+// ════════════════════════════════════════
+{id:'f1l3a',cat:'funfacts',level:3,q:"What is the longest any animal has survived without water?",opts:["1 month","6 months","3 years","10 years"],a:2,fact:"Some species of tardigrade (water bear) can survive decades without water in a state called cryptobiosis."},
+{id:'f1l3b',cat:'funfacts',level:3,q:"What percentage of Earth's species are insects?",opts:["10%","30%","50%","80%"],a:2,fact:"Insects make up about 80% of all known animal species — over 1 million described species!"},
+{id:'f1l3c',cat:'funfacts',level:3,q:"The human eye can distinguish between approximately how many colours?",opts:["1,000","10,000","100,000","10 million"],a:3,fact:"The eye has 3 types of colour receptors (cones) allowing us to see approximately 10 million shades."},
+{id:'f1l3d',cat:'funfacts',level:3,q:"What is the total length of blood vessels in the human body?",opts:["10,000 km","60,000 km","100,000 km","200,000 km"],a:2,fact:"If you stretched out all your blood vessels, they would circle Earth about 2.5 times!"},
+{id:'f1l3e',cat:'funfacts',level:3,q:"What is the only food that never spoils?",opts:["Vinegar","Salt","Honey","Dried beans"],a:2,fact:"Edible honey has been found in Egyptian tombs over 3,000 years old! Its high sugar and low moisture prevent bacteria."},
+{id:'f1l3f',cat:'funfacts',level:3,q:"What fraction of an iceberg is above water?",opts:["1/2","1/5","1/8","1/10"],a:2,fact:"About 1/8 of an iceberg is visible above water — the rest is hidden below. This inspired the phrase 'tip of the iceberg'."},
+{id:'f1l3g',cat:'funfacts',level:3,q:"How many atoms are in a grain of sand?",opts:["Thousands","Millions","Billions","Trillions or more"],a:3,fact:"A grain of sand contains approximately 8 quintillion (8,000,000,000,000,000,000) atoms of silicon dioxide."},
+{id:'f1l3h',cat:'funfacts',level:3,q:"What is the most abundant element in the universe?",opts:["Oxygen","Carbon","Helium","Hydrogen"],a:3,fact:"Hydrogen makes up about 75% of all normal matter in the universe. Stars like our Sun are mostly hydrogen."},
+{id:'f1l3i',cat:'funfacts',level:3,q:"What is the name for a word that reads the same forwards and backwards?",opts:["Anagram","Palindrome","Acronym","Synonym"],a:1,fact:"Examples: racecar, level, kayak, madam. The word 'palindrome' comes from Greek meaning 'running back again'."},
+{id:'f1l3j',cat:'funfacts',level:3,q:"How far does Earth travel through space each year (its orbit around the Sun)?",opts:["150 million km","500 million km","940 million km","2 billion km"],a:2,fact:"Earth travels about 940 million km per year, at an average speed of 107,000 km/h around the Sun!"},
+
+]; // end QUESTION_DB
+
+// ── TILE CATEGORY GENERATOR ───────────────────────────────────────────────────
+
+function generateTileCategories() {
+  const pool = [];
+  ['geography','mathematics','biology','general','funfacts'].forEach(c => {
+    for (let i = 0; i < 10; i++) pool.push(c);
+  });
+  for (let i = 0; i < 5; i++) pool.push('squid');
+  for (let i = 0; i < 3; i++) pool.push('memory');
+  // pool has 58 elements; we need 58 for tiles 2..59
+  shuffleArray(pool);
+  return ['start', ...pool, 'finish'];
 }
 
-// Get shuffled questions for a country at a given level, falling back to continent then any level
-function getQuestionsForTile(countryName, continent, level, usedIds) {
-  const allForCountry = QUESTION_DB.filter(q => q.country === countryName && !usedIds.has(q.id));
-  const byLevel = allForCountry.filter(q => q.level === level);
-  const pool = byLevel.length > 0 ? byLevel : allForCountry;
-  if (pool.length > 0) {
-    return shuffleArray([...pool]);
-  }
-  // Fallback: continent
-  const byContinent = QUESTION_DB.filter(q => q.continent === continent && !usedIds.has(q.id) && q.level === level);
-  if (byContinent.length > 0) return shuffleArray([...byContinent]);
-  const fallback = QUESTION_DB.filter(q => q.continent === continent && !usedIds.has(q.id));
-  return shuffleArray([...fallback]);
+function getQuestionForTile(category, level, usedIds) {
+  let pool = QUESTION_DB.filter(q => q.cat === category && q.level === level && !usedIds.has(q.id));
+  if (!pool.length) pool = QUESTION_DB.filter(q => q.cat === category && !usedIds.has(q.id));
+  if (!pool.length) pool = QUESTION_DB.filter(q => q.cat === category);
+  if (!pool.length) pool = QUESTION_DB;
+  return pool[Math.floor(Math.random() * pool.length)];
 }
