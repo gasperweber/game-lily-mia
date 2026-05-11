@@ -271,7 +271,6 @@ class GameEngine {
       btn.className   = 'q-option';
       btn.textContent = opt.text;
       btn.dataset.origIdx = opt.origIdx;
-      btn.addEventListener('click', () => this.selectOption(opt.origIdx, btn, optionsEl));
       optionsEl.appendChild(btn);
     });
   }
